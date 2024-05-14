@@ -19,7 +19,7 @@ function Productos() {
         setProductos(data);
       })
       .catch(error => {
-        console.error('Error al obtener productos:', error);
+        console.error('Error al obtener pdroductos:', error);
       });
   }, []); // Se ejecutará solo una vez al cargar el componente
 
