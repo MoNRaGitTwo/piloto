@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import AddProductForm from './componentes/CrearProducto'
 
-function App() {
+
+function Productos() {
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    // Realizar la solicitud HTTP al endpoint del backend
+    fetch('http://localhost:5153/TodoProductos')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Procesar la respuesta y establecer los productos en el estado
+        setProductos(data);
+      })
+      .catch(error => {
+        console.error('Error al obtener productos:', error);
+      });
+  }, []); // Se ejecutará solo una vez al cargar el componente
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Productos</h1>
+      <AddProductForm></AddProductForm>
+      <ul>
+        {productos.map(producto => (
+          <li key={producto.Id}>
+            {producto.Name} - {producto.Price}
+          </li>
+        ))}
+      </ul>
     </div>
+
+      
   );
 }
 
-export default App;
+export default Productos;
