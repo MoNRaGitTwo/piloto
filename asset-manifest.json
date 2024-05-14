@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/piloto/static/css/main.e6c13ad2.css",
+    "main.js": "/piloto/static/js/main.5105bacc.js",
+    "static/js/453.69621f62.chunk.js": "/piloto/static/js/453.69621f62.chunk.js",
+    "index.html": "/piloto/index.html",
+    "main.e6c13ad2.css.map": "/piloto/static/css/main.e6c13ad2.css.map",
+    "main.5105bacc.js.map": "/piloto/static/js/main.5105bacc.js.map",
+    "453.69621f62.chunk.js.map": "/piloto/static/js/453.69621f62.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.5105bacc.js"
+  ]
+}
