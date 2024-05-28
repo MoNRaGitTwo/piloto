@@ -7,7 +7,7 @@ function Productos() {
 
   useEffect(() => {
     // Realizar la solicitud HTTP al endpoint del backend
-    fetch('https://d4c2-2800-a4-33af-2b00-cdad-79c4-8663-eaf1.ngrok-free.app/TodoProductos')
+    ('https://e690-2800-a4-1114-9400-bc2e-8694-c4a9-f967.ngrok-free.app/TodoProductos')
       .then(response => {
         if (!response.ok) {
           throw new Error('Error');
