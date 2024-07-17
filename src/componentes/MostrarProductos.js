@@ -37,7 +37,7 @@ function Productos() {
             const data = await response.json();
             dispatch(setProductos(data));
         } catch (error) {
-            console.error('Error al obtener productos:', error);
+            console.error('Error al obtener productosss:', error);
         }
     };
 
