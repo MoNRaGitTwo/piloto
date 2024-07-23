@@ -8,7 +8,8 @@ import {
   updateStockAsync,
 } from '../reducers/productosSlice';
 import { addProductoComprar } from '../reducers/listaProductosComprarSlice';
-import { addProductoSugerido, setProductosSugeridos } from '../reducers/listaSugeridaSlice';
+import { addProductoSugerido  } from '../reducers/listaSugeridaSlice';
+import { addProductoCarrito  } from '../reducers/carritoSlice';
 import { API_BASE_URL } from '../config';
 import EditProductForm from './EditProductoFrom';
 import '../styles/styles.css';
@@ -16,6 +17,7 @@ import '../styles/styles.css';
 function Productos() {
   const dispatch = useDispatch();
   const productos = useSelector((state) => state.storeProducto.productoSlice);
+  const carrito = useSelector((state) => state.storeCarrito.carritolice);
   const productosComprar = useSelector((state) => state.listaProductosComprar.productosComprar);
   const productosSugeridos = useSelector((state) => state.storeListaSugerida.productosSugeridos);
   const [editedProduct, setEditedProduct] = useState(null);
@@ -106,6 +108,11 @@ function Productos() {
       dispatch(addProductoSugerido(producto));
     }
   };
+  const handleAddToCarrito = (producto) => {
+    if (!carrito.some((p) => p.Id === producto.Id)) {
+      dispatch(addProductoCarrito(producto));
+    }
+  };
 
   const filteredProductos = productos.filter((producto) => {
     if (!producto.Name) {
@@ -137,7 +144,7 @@ function Productos() {
           <li
             key={producto.Id}
             className={`list-group-item ${
-              producto.Stock <= 2 ? 'list-group-item-danger' : producto.Stock <= 5 ? 'list-group-item-warning' : ''
+              producto.Stock <= 1 ? 'list-group-item-danger' : producto.Stock <= 0 ? 'list-group-item-warning' : ''
             }`}
           >
             <img
@@ -167,7 +174,7 @@ function Productos() {
               </button>
               <button
                 className='btn btn-outline-secondary btn-sm ms-2'
-                onClick={() => handleAddToSugeridos(producto)}
+                onClick={() => handleAddToCarrito(producto)}
                 disabled={productosSugeridos.some((p) => p.Id === producto.Id)}
               >
                 Carrito

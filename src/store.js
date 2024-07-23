@@ -5,6 +5,8 @@ import ProveedoresReducer from '../src/reducers/proveedorSlice'; // Este archivo
 import CajaReducer from '../src/reducers/cajaSlice'
 import listaProductosComprarReducer from '../src/reducers/listaProductosComprarSlice';
 import listaSugeridaReducer from '../src/reducers/listaSugeridaSlice';
+import carritoReducer from '../src/reducers/carritoSlice';
+import pedidosReducer from '../src/reducers/pedidosSlice';  
 
  const store =  configureStore({
   reducer:{
@@ -14,7 +16,9 @@ import listaSugeridaReducer from '../src/reducers/listaSugeridaSlice';
     storeProveedor: ProveedoresReducer,
     storeCaja:CajaReducer,
     listaProductosComprar: listaProductosComprarReducer,
-    storeListaSugerida:listaSugeridaReducer
+    storeListaSugerida:listaSugeridaReducer,
+    storeCarrito: carritoReducer,
+    storePedidos: pedidosReducer,
 
     
      
