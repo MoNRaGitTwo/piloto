@@ -13,6 +13,8 @@ import ProductosSeleccionados from './componentes/ProductosSeleccionados';
 import ProveedoresConProductos from './componentes/ProveedoresConProductos';
 import ListaSugerida from './componentes/ListaSugerida';
 import RandomProducts from './componentes/RandomProducts';
+import Carrito from './componentes/Carrito';
+import Pedidos from './componentes/Pedidos';
 
 
 const App = () => {
@@ -56,6 +58,12 @@ const App = () => {
               <li className="nav-item">
                 <Link className="nav-link" to="/mostrar-Ofertas">Ofertas</Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/mostrar-Carrito">Carrito</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/mostrar-Pedidos">Pedidos</Link>
+              </li>
               
             </ul>
           </div>
@@ -73,6 +81,8 @@ const App = () => {
           <Route path="/mostrar-ProdConProveedor" element={<ProveedoresConProductos />} />
           <Route path="/mostrar-ListaSugerida" element={<ListaSugerida />} />
           <Route path="/mostrar-Ofertas" element={<RandomProducts />} />
+          <Route path="/mostrar-Carrito" element={<Carrito />} />
+          <Route path="/mostrar-Pedidos" element={<Pedidos />} />
           
         </Routes>
       </div>

@@ -37,25 +37,23 @@ function Productos() {
             const data = await response.json();
             dispatch(setProductos(data));
         } catch (error) {
-            console.error('Error al dfdfdfobtener productosss:', error);
+            console.error('Error al obtener productos:', error);
         }
     };
 
     fetchProductos();
-}, [dispatch]);
+  }, [dispatch]);
 
-  
-
-useEffect(() => {
-  productos.forEach((producto) => {
+  useEffect(() => {
+    productos.forEach((producto) => {
       if (producto.Stock <= 5 && !productosSugeridos.some((p) => p.Id === producto.Id)) {
-          dispatch(addProductoSugerido({
-              ...producto,
-              Proveedor: producto.Proveedores && producto.Proveedores.length > 0 ? producto.Proveedores[0].Nombre : 'Desconocido'
-          }));
+        dispatch(addProductoSugerido({
+          ...producto,
+          Proveedor: producto.Proveedores && producto.Proveedores.length > 0 ? producto.Proveedores[0].Nombre : 'Desconocido'
+        }));
       }
-  });
-}, [productos, productosSugeridos, dispatch]);
+    });
+  }, [productos, productosSugeridos, dispatch]);
 
   const handleGenerateList = () => {
     const lowStockProductos = productos.filter((producto) => producto.Stock <= 5);
@@ -100,6 +98,12 @@ useEffect(() => {
   const handleAddToComprar = (producto) => {
     if (!productosComprar.some((p) => p.Id === producto.Id)) {
       dispatch(addProductoComprar(producto));
+    }
+  };
+
+  const handleAddToSugeridos = (producto) => {
+    if (!productosSugeridos.some((p) => p.Id === producto.Id)) {
+      dispatch(addProductoSugerido(producto));
     }
   };
 
@@ -160,6 +164,13 @@ useEffect(() => {
                 disabled={productosComprar.some((p) => p.Id === producto.Id)}
               >
                 Agregar a comprar
+              </button>
+              <button
+                className='btn btn-outline-secondary btn-sm ms-2'
+                onClick={() => handleAddToSugeridos(producto)}
+                disabled={productosSugeridos.some((p) => p.Id === producto.Id)}
+              >
+                Carrito
               </button>
             </div>
           </li>
