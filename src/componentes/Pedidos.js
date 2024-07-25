@@ -10,7 +10,7 @@ const PedidosList = () => {
     useEffect(() => {
         const fetchPedidos = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL3}/Pedidos`);
+                const response = await axios.get(  `${API_BASE_URL3}/api/Pedidos`);
                 // Verifica y ajusta cómo accedes a los datos
                 const data = response.data.$values || [];
                 setPedidos(data); // Ajusta según la estructura real
