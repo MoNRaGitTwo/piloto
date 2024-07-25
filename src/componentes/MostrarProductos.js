@@ -175,7 +175,7 @@ function Productos() {
               <button
                 className='btn btn-outline-secondary btn-sm ms-2'
                 onClick={() => handleAddToCarrito(producto)}
-                disabled={productosSugeridos.some((p) => p.Id === producto.Id)}
+                disabled={carrito.some((p) => p.Id === producto.Id)}
               >
                 Carrito
               </button>

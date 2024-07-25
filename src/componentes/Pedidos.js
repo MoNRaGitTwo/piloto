@@ -1,26 +1,68 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import '../styles/styles.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const Pedidos = () => {
-  const pedidos = useSelector((state) => state.storePedidos.pedidosSlice);
+const PedidosList = () => {
+    const [pedidos, setPedidos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  if (pedidos.length === 0) {
-    return <div>No hay productos en pedidos</div>;
-  }
+    useEffect(() => {
+        const fetchPedidos = async () => {
+            try {
+                const response = await axios.get('http://localhost:5153/api/Pedidos');
+                // Verifica y ajusta cómo accedes a los datos
+                const data = response.data.$values || [];
+                setPedidos(data); // Ajusta según la estructura real
+                setLoading(false);
+            } catch (err) {
+                setError(err);
+                setLoading(false);
+            }
+        };
 
-  return (
-    <div className='container'>
-      <h1>Pedidos</h1>
-      <ul className='list-group'>
-        {pedidos.map((producto) => (
-          <li key={producto.Id} className='list-group-item'>
-            <span>{producto.Name}</span> - <span>$ {producto.Price}</span> - <span>Stock: {producto.Stock}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+        fetchPedidos();
+    }, []);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+
+    return (
+        <div>
+            <h1>Lista de Pedidos</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente ID</th>
+                        <th>Fecha Pedido</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {pedidos.map(pedido => (
+                        <tr key={pedido.Id}>
+                            <td>{pedido.Id}</td>
+                            <td>{pedido.ClienteId}</td>
+                            <td>{new Date(pedido.FechaPedido).toLocaleString()}</td>
+                            <td>{pedido.Total}</td>
+                            <td>{pedido.Estado}</td>
+                            <td>
+                                <ul>
+                                    {pedido.DetallesPedidos.$values.map(detalle => (
+                                        <li key={detalle.Id}>
+                                            Producto ID: {detalle.ProductoId}, Cantidad: {detalle.Cantidad}, Precio: {detalle.Precio}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
-export default Pedidos;
+export default PedidosList;
