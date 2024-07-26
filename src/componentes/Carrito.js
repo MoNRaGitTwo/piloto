@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addProductoPedido } from '../reducers/pedidosSlice';
+import { addProductoPedido, guardarPedido } from '../reducers/pedidosSlice';
 import '../styles/styles.css';
 
 const Carrito = () => {
@@ -9,6 +9,21 @@ const Carrito = () => {
   const carrito = useSelector((state) => state.storeCarrito.carritolice);
 
   const handleComprar = () => {
+    const pedido = {
+      ClienteId: 1,  // Asigna el ID del cliente correspondiente
+      FechaPedido: new Date().toISOString(),
+      Total: 10,
+      Estado: 'Pendiente',
+      DetallesPedidos: carrito.map(producto => ({
+        ProductoId: producto.Id,
+        Cantidad: producto.Stock,
+        Precio: producto.Price,
+        
+
+      }))
+    };
+      console.log("Soy el pedido" , pedido)
+    dispatch(guardarPedido(pedido));
     carrito.forEach((producto) => {
       dispatch(addProductoPedido(producto));
     });
