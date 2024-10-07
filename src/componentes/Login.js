@@ -13,7 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const response = await fetch(`${API_BASE_URL4}/Auth/login`, {
+    const response = await fetch(`${API_BASE_URL4}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre: nombre, password: password }), // Envía los datos del login
