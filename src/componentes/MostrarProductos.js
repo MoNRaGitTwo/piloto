@@ -10,7 +10,7 @@ import {
 import { addProductoComprar } from '../reducers/listaProductosComprarSlice';
 import { addProductoSugerido } from '../reducers/listaSugeridaSlice';
 import { addProductoCarrito } from '../reducers/carritoSlice';
-import { API_BASE_URL3 } from '../config';
+import { API_BASE_URL5 } from '../config';
 import EditProductForm from './EditProductoFrom';
 import ProductCarousel from './Carrusel';
 import { incrementarCantidad, disminuirCantidad,addProductoCarritoCantidad } from '../reducers/cantidadSlice';
@@ -33,7 +33,7 @@ function Productos() {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL3}/Products/TodoProductos`, {
+        const response = await fetch(`${API_BASE_URL5}`, {
           headers: {
             'ngrok-skip-browser-warning': 'true',
           },
