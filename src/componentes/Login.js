@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { login } from '../reducers/authSlice';
 import { setUser } from '../reducers/userSlice';  // Importa la acción setUser
 import { useNavigate } from 'react-router-dom';
+import {API_BASE_URL4}  from '../config';
 
 const Login = () => {
   // Inicializa con los valores 'admin'
@@ -12,7 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const response = await fetch('http://localhost:5153/Auth/login', {
+    const response = await fetch(`${API_BASE_URL4}/Auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre: nombre, password: password }), // Envía los datos del login
