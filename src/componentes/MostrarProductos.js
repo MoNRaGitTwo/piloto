@@ -33,7 +33,7 @@ function Productos() {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await fetch('http://localhost:5153/Products/TodoProductos', {
+        const response = await fetch(`${API_BASE_URL}/Products/TodoProductos`, {
           headers: {
             'ngrok-skip-browser-warning': 'true',
           },
