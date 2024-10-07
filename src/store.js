@@ -7,6 +7,12 @@ import listaProductosComprarReducer from '../src/reducers/listaProductosComprarS
 import listaSugeridaReducer from '../src/reducers/listaSugeridaSlice';
 import carritoReducer from '../src/reducers/carritoSlice';
 import pedidosReducer from '../src/reducers/pedidosSlice';  
+import authReducer from '../src/reducers/authSlice';
+import cantidadReducer from '../src/reducers/cantidadSlice';
+import userReducer from '../src/reducers/userSlice'; // Importa el userSlice
+import pedidoEstadoReducer from './reducers/pedidoEstadoSlice';
+import pedidoDosReducer from '../src/reducers/pedidoDosSlice'; 
+import reservasReducer from './reducers/reservasSlice';
 
  const store =  configureStore({
   reducer:{
@@ -19,6 +25,12 @@ import pedidosReducer from '../src/reducers/pedidosSlice';
     storeListaSugerida:listaSugeridaReducer,
     storeCarrito: carritoReducer,
     storePedidos: pedidosReducer,
+    storeAuth: authReducer,
+    storeCantidad: cantidadReducer,
+    storeUser: userReducer,
+    pedidoEstado: pedidoEstadoReducer,
+    pedidoDosStore:pedidoDosReducer,
+    reservas: reservasReducer,
 
     
      

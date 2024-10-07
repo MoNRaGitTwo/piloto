@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addProductAsync } from '../reducers/productosSlice';
-import { API_BASE_URL } from '../config';
+//import { API_BASE_URL } from '../config';
 
 const AddProductForm = () => {
   const [productName, setProductName] = useState('');
@@ -13,26 +13,9 @@ const AddProductForm = () => {
   const [existingQRCodes, setExistingQRCodes] = useState([]);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/TodoProductos`, {
-          headers: {
-            'ngrok-skip-browser-warning': 'true',
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Error al obtener productos: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setExistingQRCodes(data.map(product => product.CodigoQR));
-      } catch (error) {
-        console.error('Error al obtener productos:', error);
-      }
-    };
+ 
 
-    fetchProductos();
-  }, []);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();

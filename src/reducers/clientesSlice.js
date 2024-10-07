@@ -30,7 +30,7 @@ export const actualizarDeudaCliente = createAsyncThunk(
     'clientes/actualizarDeudaCliente',
     async ({ clienteId, nuevaDeuda }, thunkAPI) => {
         try {
-            const response = await axios.post(`${API_BASE_URL3}/clientes/ActualizarDeudaCliente`, { 
+            const response = await axios.post(`http://localhost:5153/api/Users/${clienteId}/actualizarDeuda`, { 
                 ClienteId: clienteId, 
                 NuevaDeuda: nuevaDeuda 
             });

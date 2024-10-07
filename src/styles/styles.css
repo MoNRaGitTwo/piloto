@@ -1,62 +1,80 @@
-/* styles.css */
-.low-stock {
-    background-color: red;
-  }
-  
-  .medium-stock {
-    background-color: yellow;
-  }
-  
-  /* Otros estilos que puedas necesitar */
-  detalle-compras {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .detalle-compras th, .detalle-compras td {
-    border: 1px solid #dddddd;
-    padding: 8px;
-    text-align: center;
-  }
-  
-  .detalle-compras th {
-    background-color: #f2f2f2;
-  } 
+/* Estilos para la cuadrícula de productos */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
 
-  .proveedores-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 1em;
-    font-family: 'Arial', sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-  }
+.product-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.product-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.product-info {
+  text-align: center;
+}
+
+.product-name,
+.product-price,
+.product-stock {
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+.btn-group {
+  margin-top: 10px;
+}
+
+.carousel .carousel-item {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px; /* Ajusta según sea necesario */
+}
+
+.carousel .carousel-item img {
+  width: auto;
+  height: 300px; /* Establece la altura fija */
+  object-fit: contain; /* Asegura que la imagen se ajuste dentro del contenedor */
   
-  .proveedores-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-  }
-  
-  .proveedores-table th,
-  .proveedores-table td {
-    padding: 12px 15px;
-  }
-  
-  .proveedores-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-  }
-  
-  .proveedores-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-  }
-  
-  .proveedores-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-  }
-  
-  .proveedores-table tbody tr:hover {
-    background-color: #f1f1f1;
-  }
-  
+}
+
+.carousel .carousel-content {
+  padding: 20px;
+}
+
+.btn-secondary {
+  background-color: #6c757d; /* Gris para Pendiente */
+  color: white;
+}
+
+.btn-warning {
+  background-color: #d39e00; /* Amarillo oscuro para En proceso */
+  color: white;
+}
+
+.btn-success {
+  background-color: #28a745; /* Verde oscuro para Listo */
+  color: white;
+}
+
+.low-stock-yellow {
+  border: 2px solid yellow;
+}
+
+.low-stock-red {
+  border: 2px solid red;
+}
+

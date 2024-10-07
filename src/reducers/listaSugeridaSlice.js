@@ -8,7 +8,7 @@ export const listaSugeridaSlice = createSlice({
   reducers: {
     addProductoSugerido: (state, action) => {
       state.productosSugeridos.push(action.payload);
-      console.log("soy producto sugerido SLICE" ,action.payload);
+     // console.log("soy producto sugerido SLICE" ,action.payload);
     },
     removeProductoSugerido: (state, action) => {
       state.productosSugeridos = state.productosSugeridos.filter(p => p.Id !== action.payload);

@@ -8,10 +8,13 @@ import {
   updateStockAsync,
 } from '../reducers/productosSlice';
 import { addProductoComprar } from '../reducers/listaProductosComprarSlice';
-import { addProductoSugerido  } from '../reducers/listaSugeridaSlice';
-import { addProductoCarrito  } from '../reducers/carritoSlice';
+import { addProductoSugerido } from '../reducers/listaSugeridaSlice';
+import { addProductoCarrito } from '../reducers/carritoSlice';
 import { API_BASE_URL } from '../config';
 import EditProductForm from './EditProductoFrom';
+import ProductCarousel from './Carrusel';
+import { incrementarCantidad, disminuirCantidad,addProductoCarritoCantidad } from '../reducers/cantidadSlice';
+
 import '../styles/styles.css';
 
 function Productos() {
@@ -20,27 +23,29 @@ function Productos() {
   const carrito = useSelector((state) => state.storeCarrito.carritolice);
   const productosComprar = useSelector((state) => state.listaProductosComprar.productosComprar);
   const productosSugeridos = useSelector((state) => state.storeListaSugerida.productosSugeridos);
+  
   const [editedProduct, setEditedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const cantidad = useSelector((state) => state.storeCantidad);
   const productsPerPage = 10;
 
   useEffect(() => {
     const fetchProductos = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/TodoProductos`, {
-                headers: {
-                    'ngrok-skip-browser-warning': 'true',
-                },
-            });
-            if (!response.ok) {
-                throw new Error(`Error al obtener productos: ${response.statusText}`);
-            }
-            const data = await response.json();
-            dispatch(setProductos(data.$values));
-        } catch (error) {
-            console.error('Error al obtener productos:', error);
+      try {
+        const response = await fetch('http://localhost:5153/Products/TodoProductos', {
+          headers: {
+            'ngrok-skip-browser-warning': 'true',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Error al obtener productos: ${response.statusText}`);
         }
+        const data = await response.json();
+        dispatch(setProductos(data.$values));
+      } catch (error) {
+        console.error('Error al obtener productos:', error);
+      }
     };
 
     fetchProductos();
@@ -59,7 +64,7 @@ function Productos() {
 
   const handleGenerateList = () => {
     const lowStockProductos = productos.filter((producto) => producto.Stock <= 5);
-    console.log("soy lista sugerida" , lowStockProductos);
+    console.log("soy lista sugerida", lowStockProductos);
     dispatch(addProductoSugerido(lowStockProductos));
   };
 
@@ -108,9 +113,18 @@ function Productos() {
       dispatch(addProductoSugerido(producto));
     }
   };
+
   const handleAddToCarrito = (producto) => {
+    const cantidadSeleccionada = cantidad[producto.Id] || 1; // Obtén la cantidad actual del store
+  
+    // Guarda la cantidad en el estado de cantidad
+    dispatch(addProductoCarritoCantidad({ Id: producto.Id, cantidad: cantidadSeleccionada }));
+  
     if (!carrito.some((p) => p.Id === producto.Id)) {
-      dispatch(addProductoCarrito(producto));
+      dispatch(addProductoCarrito({
+        ...producto,
+        cantidad: cantidadSeleccionada, // Añade la cantidad al producto que se guarda en el carrito
+      }));
     }
   };
 
@@ -121,69 +135,83 @@ function Productos() {
     return producto.Name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const getImageUrl = (base64Data) => {
-    return `data:image/jpeg;base64,${base64Data}`;
-  };
-
   // Calcular índices para la paginación
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProductos.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  const paginate = pageNumber => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (!productos || productos.length === 0) {
     return <div>No hay productos disponibles</div>;
   }
 
   const renderProductList = (productos) => (
-    <ul className='list-group'>
+    <div className="product-grid">
       {productos.map((producto) => {
-        const isLowStock = producto.Stock <= 5;
+        let stockClass = "";
+        if (producto.Stock < 3) {
+          stockClass = "low-stock-red"; // Menor a 3, rojo
+        } else if (producto.Stock < 5) {
+          stockClass = "low-stock-yellow"; // Menor a 5, amarillo
+        }
+  
         return (
-          <li
-            key={producto.Id}
-            className={`list-group-item ${
-              producto.Stock <= 1 ? 'list-group-item-danger' : producto.Stock <= 0 ? 'list-group-item-warning' : ''
-            }`}
-          >
+          <div key={producto.Id} className={`product-item ${stockClass}`}>
             <img
-              src={getImageUrl(producto.ImageData)}
+              src={`data:image/jpeg;base64,${producto.ImageData}`}
               alt={producto.Name}
-              style={{ width: '50px', height: '50px' }}
-              className='me-3'
+              className="product-image"
             />
-            <span style={{ fontWeight: 'bold', fontSize: '1.4em' }}>{producto.Name}</span> -{' '}
-            <span style={{ fontWeight: 'bold', fontSize: '1.4em' }}>$ {producto.Price} - Stock: {producto.Stock} </span>
-            <div className='btn-group float-end'>
-              <button className='btn btn-outline-secondary btn-sm ms-2' onClick={() => handleEdit(producto)}>
+            <div className="product-info">
+              <span className="product-name">{producto.Name}</span>
+              <span className="product-price">$ {producto.Price}</span>
+              <span className="product-stock">Stock: {producto.Stock}</span>
+            </div>
+            <div className="btn-group">
+              <button className='btn btn-outline-secondary btn-sm' onClick={() => handleEdit(producto)}>
                 Editar
               </button>
-              <button className='btn btn-outline-secondary btn-sm ms-2' onClick={() => handleSell(producto)}>
+              <button className='btn btn-outline-secondary btn-sm' onClick={() => handleSell(producto)}>
                 Vender
               </button>
-              <button className='btn btn-outline-secondary btn-sm ms-2' onClick={() => handleDelete(producto.Id)}>
+              <button className='btn btn-outline-secondary btn-sm' onClick={() => handleDelete(producto.Id)}>
                 Eliminar
               </button>
               <button
-                className='btn btn-outline-secondary btn-sm ms-2'
+                className='btn btn-outline-secondary btn-sm'
                 onClick={() => handleAddToComprar(producto)}
                 disabled={productosComprar.some((p) => p.Id === producto.Id)}
               >
                 Agregar a comprar
               </button>
               <button
-                className='btn btn-outline-secondary btn-sm ms-2'
+                className='btn btn-outline-secondary btn-sm'
                 onClick={() => handleAddToCarrito(producto)}
                 disabled={carrito.some((p) => p.Id === producto.Id)}
               >
                 Carrito
               </button>
             </div>
-          </li>
+            <div className="product-quantity">
+              <button
+                className='btn btn-outline-secondary btn-sm'
+                onClick={() => dispatch(disminuirCantidad({ id: producto.Id }))}>
+                -
+              </button>
+              <span className="quantity-value">
+                {cantidad[producto.Id] || 1}
+              </span>
+              <button
+                className='btn btn-outline-secondary btn-sm'
+                onClick={() => dispatch(incrementarCantidad({ id: producto.Id }))}>
+                +
+              </button>
+            </div>
+          </div>
         );
       })}
-    </ul>
+    </div>
   );
 
   return (
@@ -201,9 +229,10 @@ function Productos() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      <ProductCarousel />
       {editedProduct && <EditProductForm product={editedProduct} onSubmit={handleEditSubmit} onCancel={() => setEditedProduct(null)} />}
       {renderProductList(currentProducts)}
-      
+
       {/* Paginación */}
       {filteredProductos.length > productsPerPage && (
         <nav>

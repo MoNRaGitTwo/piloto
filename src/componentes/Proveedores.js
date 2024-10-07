@@ -1,37 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { API_BASE_URL3 } from '../config';
-import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios'; // Importa axios si prefieres usarlo en lugar de fetch
+import axios from 'axios';
 import '../styles/styles.css'; // Importa tu archivo CSS aquí
-import { setProveedores  } from '../reducers/proveedorSlice';
 
 const Proveedores = () => {
-  //const [proveedores, setProveedores] = useState([]);
-  const proveedoresGlobal = useSelector(state => state.storeProveedor.proveedorSlice);
-  //const clientesGlobales = useSelector(state => state.storeClientes.clientesSlice);
-  const dispatch = useDispatch();
+  const [proveedores, setProveedores] = useState([]); // Estado local
 
   useEffect(() => {
     const fetchProveedores = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL3}/TodosProveedores`, {
+        const response = await axios.get('http://localhost:5153/TodosProveedores', {
           headers: {
             'ngrok-skip-browser-warning': 'true'
           }
         });
-        if (!response.ok) {
-          throw new Error(`Error al obtener proveedores: ${response.statusText}`);
+        if (response.status === 200) {
+          const data = response.data.$values; // Acceder a $values
+          setProveedores(data);
+        } else {
+          throw new Error('Error al obtener proveedores');
         }
-        const data = await response.json();
-        //setProveedores(data);
-        dispatch(setProveedores(data));
       } catch (error) {
         console.error('Error al obtener proveedores:', error);
       }
     };
 
     fetchProveedores();
-  }, []); // El array vacío [] asegura que este efecto solo se ejecute una vez, cuando el componente se monta.
+  }, []); // El array vacío asegura que este efecto solo se ejecute una vez, cuando el componente se monta.
 
   const renderProveedores = () => (
     <table className="proveedores-table">
@@ -43,7 +37,7 @@ const Proveedores = () => {
         </tr>
       </thead>
       <tbody>
-        {proveedoresGlobal.map(p => (
+        {proveedores.map(p => (
           <tr key={p.Id}>
             <td>{p.Empresa}</td>
             <td>{p.Nombre}</td>
@@ -59,7 +53,6 @@ const Proveedores = () => {
       {renderProveedores()}
     </div>
   );
-
 };
 
 export default Proveedores;
