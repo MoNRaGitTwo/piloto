@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/styles.css'; // Importa tu archivo CSS aquí
+import { API_BASE_URL3 } from '../config';
 
 const Proveedores = () => {
   const [proveedores, setProveedores] = useState([]); // Estado local
@@ -8,7 +9,7 @@ const Proveedores = () => {
   useEffect(() => {
     const fetchProveedores = async () => {
       try {
-        const response = await axios.get('http://localhost:5153/TodosProveedores', {
+        const response = await axios.get(`${API_BASE_URL3}/TodosProveedores`, {
           headers: {
             'ngrok-skip-browser-warning': 'true'
           }

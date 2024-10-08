@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import {  actualizarEstadoPedido, addProductoPedido } from '../reducers/pedidosSlice';
 import { actualizarEstadoPedido as actualizarEstadoPedidoGlobal } from '../reducers/pedidoEstadoSlice';
+import { API_BASE_URL3 } from '../config';
 
 const PedidosList = () => {
     const [loading, setLoading] = useState(true);
@@ -18,11 +19,11 @@ const PedidosList = () => {
     useEffect(() => {
         const fetchPedidos = async () => {
             try {
-                const responsePedidos = await axios.get('http://localhost:5153/api/Pedidos');
+                const responsePedidos = await axios.get(`${API_BASE_URL3}/Pedidos`);
                 const dataPedidos = responsePedidos.data.$values || [];
 
 
-                const responseUsuarios = await axios.get('http://localhost:5153/api/Users');
+                const responseUsuarios = await axios.get(`${API_BASE_URL3}/Users`);
                 const dataUsuarios = responseUsuarios.data.$values || [];
                 setTodosUsuarios(dataUsuarios); // Guarda los usuarios en el estado
 

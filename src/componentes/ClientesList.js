@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { setClientes } from '../reducers/clientesSlice';
 import { actualizarDeudaAsync } from '../reducers/userSlice'; // Importar la acción asíncrona
+import { API_BASE_URL3 } from '../config';
 
 const ClientesList = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const ClientesList = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await axios.get(`http://localhost:5153/api/Users`, {
+        const response = await axios.get(` ${API_BASE_URL3}/Users`, {
           headers: {
             'ngrok-skip-browser-warning': 'true'
           }

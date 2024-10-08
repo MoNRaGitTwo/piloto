@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API_BASE_URL3 } from '../config';
 
 // Acción asíncrona para actualizar la deuda en la base de datos
 export const actualizarDeudaAsync = createAsyncThunk(
   'user/actualizarDeuda',
   async ({ id, nuevaDeuda }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:5153/api/Users/${id}/actualizarDeuda`, {
+      const response = await fetch(`${API_BASE_URL3}/api/Users/${id}/actualizarDeuda`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nuevaDeuda),

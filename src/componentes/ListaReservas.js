@@ -1,6 +1,7 @@
-// src/componentes/ListaReservas.js
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL3 } from '../config';
+
 
 const ListaReservas = () => {
   const [reservasBD, setReservasBD] = useState([]);
@@ -11,7 +12,7 @@ const ListaReservas = () => {
   // Función para obtener las reservas desde la base de datos
   const obtenerReservas = async () => {
     try {
-      const response = await fetch('http://localhost:5153/TodaslasReservas', {
+      const response = await fetch(`${API_BASE_URL3}/TodaslasReservas`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -40,23 +41,24 @@ const ListaReservas = () => {
     obtenerReservas();
   }, []);
 
+  const todasReservas = [...reservasBD, ...reservasRedux].filter((reserva, index, self) =>
+    index === self.findIndex((r) => r.ReservaId === reserva.ReservaId) // Comparar por ReservaId
+  );
+
   return (
     <div>
-      <h2>Lista de Reservas</h2>
+      <h2>Lista de Reservas Barbero</h2>
       <ul>
-        {/* Mostrar las reservas obtenidas desde la base de datos */}
-        {reservasBD.map((reserva, index) => (
-          <li key={index}>
-            {new Date(reserva.FechaHora).getHours()}:00 - {reserva.Barbero} - {reserva.ClienteNombre} ({reserva.ClienteTelefono})
-          </li>
-        ))}
-
-        {/* Opcional: Mostrar las reservas locales desde Redux (si se quiere conservar esta funcionalidad) */}
-        {reservasRedux.map((reserva, index) => (
-          <li key={index}>
-            {reserva.hora}:00 - {reserva.barbero} - {reserva.nombre} ({reserva.telefono})
-          </li>
-        ))}
+        {/* Mostrar todas las reservas sin duplicados */}
+        {todasReservas.length > 0 ? (
+          todasReservas.map((reserva) => (
+            <li key={reserva.ReservaId}> {/* Usar ReservaId como clave */}
+              {new Date(reserva.FechaHora).getHours()}:00 - {reserva.Barbero} - {reserva.ClienteNombre} ({reserva.ClienteTelefono})
+            </li>
+          ))
+        ) : (
+          <li>No hay reservas disponibles.</li>
+        )}
       </ul>
     </div>
   );

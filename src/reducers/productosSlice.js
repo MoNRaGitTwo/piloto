@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, API_BASE_URL3 } from '../config';
 import axios from 'axios';
 
 // Thunk para eliminar producto
-
-//http://localhost:5153/Products/Eliminar/
-//(`${API_BASE_URL}/Eliminar/${Id}`
 export const deleteProductAsync = createAsyncThunk(
   'producto/deleteProductAsync',
   async (Id, thunkAPI) => {
-    const response = await fetch(`http://localhost:5153/Products/Eliminar/${Id}`, {
+    const response = await fetch(`${API_BASE_URL3}/Products/Eliminar/${Id}`, {
       method: 'DELETE',
     });
 
@@ -25,21 +22,17 @@ export const deleteProductAsync = createAsyncThunk(
 export const fetchProductsAsync = createAsyncThunk(
   'productos/fetchProducts',
   async () => {
-    const response = await axios.get(`${API_BASE_URL}/TodoProductos`); // Asegúrate de ajustar la URL según tu backend
+    const response = await axios.get(`${API_BASE_URL}/TodoProductos`);
     return response.data;
   }
 );
 
-
-
 // Thunk para editar producto
-//http://localhost:5153/Products/Editar/
-//`${API_BASE_URL}/Editar/${formData.get('Id')}`, formData,
 export const editProductAsync = createAsyncThunk(
   'producto/editProductAsync',
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.put(`http://localhost:5153/Products/Editar/${formData.get('Id')}`, formData, {
+      const response = await axios.put(`${API_BASE_URL3}/Products/Editar/${formData.get('Id')}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -56,13 +49,19 @@ export const editProductAsync = createAsyncThunk(
   }
 );
 
+// Thunk para reducir el stock
+//  local -->     http://localhost:5153/Products/ReducirStock/151?cantidadComprada=1
+// ${API_BASE_URL3}
 export const reducirStockAsync = createAsyncThunk(
   'productos/reducirStockAsync',
   async ({ id, cantidadComprada }, thunkAPI) => {
     try {
-      const response = await fetch(`http://localhost:5153/Products/ReducirStock/${id}?cantidadComprada=${cantidadComprada}`, {
+      const response = await fetch(`${API_BASE_URL3}/Products/ReducirStock/${id}?cantidadComprada=${cantidadComprada}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}), // Si tu backend espera un body, puedes enviar un objeto vacío
       });
       
       if (!response.ok) {
@@ -81,13 +80,11 @@ export const updateStockAsync = createAsyncThunk(
   'producto/updateStockAsync',
   async ({ id, nuevoStock }, thunkAPI) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/ActualizarStock/${id}`, nuevoStock,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          }
+      const response = await axios.put(`${API_BASE_URL}/ActualizarStock/${id}`, nuevoStock, {
+        headers: {
+          'Content-Type': 'application/json',
         }
-      );     
+      });
 
       if (response.status !== 200) {
         throw new Error('Error al actualizar el stock');
@@ -102,13 +99,11 @@ export const updateStockAsync = createAsyncThunk(
 );
 
 // Thunk para agregar producto
-//${API_BASE_URL}/crear
- //http://localhost:5153/Products/crear
 export const addProductAsync = createAsyncThunk(
   'productos/addProduct',
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post(`http://localhost:5153/Products/crear`, formData, {
+      const response = await axios.post(`${API_BASE_URL3}/Products/crear`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -143,7 +138,6 @@ export const productoSlice = createSlice({
     },
     setProductos: (state, action) => {
       state.productoSlice = action.payload;
-      //console.log("soy productos en el sliuce" , action.payload)
     }
   },
   extraReducers: (builder) => {

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { setPedidosDos, updateEstadoPedido, updatePedidoList, eliminarPedido } from '../reducers/pedidoDosSlice';
+import { API_BASE_URL3 } from '../config';
 
 const PedidosDos = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -17,13 +18,13 @@ const PedidosDos = () => {
     const fetchPedidosYUsuarios = async () => {
       try {
         // Obtener pedidos
-        const responsePedidos = await axios.get('http://localhost:5153/api/Pedidos');
+        const responsePedidos = await axios.get(`${API_BASE_URL3}/api/Pedidos`);
         const dataPedidos = responsePedidos.data.$values || [];
         setPedidos(dataPedidos);
         dispatch(setPedidosDos(dataPedidos)); // Agrega los pedidos al store global
 
         // Obtener usuarios
-        const responseUsuarios = await axios.get('http://localhost:5153/api/Users');
+        const responseUsuarios = await axios.get(`${API_BASE_URL3}/api/Users`);
         const dataUsuarios = responseUsuarios.data.$values || [];
         setUsuarios(dataUsuarios); // Guarda los usuarios en el estado
 
@@ -73,7 +74,7 @@ const PedidosDos = () => {
   
     // Actualiza el estado en el servidor
     try {
-      await axios.put(`http://localhost:5153/api/Pedidos/${pedidoId}`, {
+      await axios.put(`${API_BASE_URL3}/api/Pedidos/${pedidoId}`, {
         ...pedidoActual,
         Estado: nuevoEstado
       });
@@ -90,7 +91,7 @@ const PedidosDos = () => {
   const handleEliminarPedido = async (pedidoId) => {
     try {
       // Eliminar el pedido del servidor (primera eliminación)
-      await axios.delete(`http://localhost:5153/api/Pedidos/${pedidoId}`);
+      await axios.delete(`${API_BASE_URL3}/Pedidos/${pedidoId}`);
   
       // Eliminar el pedido de la lista local
       const updatedPedidos = pedidos.filter(pedido => pedido.Id !== pedidoId);

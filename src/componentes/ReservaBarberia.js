@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addReserva } from '../reducers/reservasSlice';
+import { API_BASE_URL3 } from '../config';
 
 const horarios = [15, 16, 17, 18, 19, 20, 21, 22];
 
@@ -16,7 +17,7 @@ const ReservaBarberia = () => {
   // Función para crear una reserva en la base de datos
   const crearReservaEnDB = async (reservaData) => {
     try {
-      const response = await fetch('http://localhost:5153/CrearReserva', {
+      const response = await fetch(`${API_BASE_URL3}/CrearReserva`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,6 +31,7 @@ const ReservaBarberia = () => {
 
       const data = await response.json();
       console.log('Reserva creada:', data);
+      dispatch(addReserva({ ...reservaData, ReservaId: data.ReservaId }));
     } catch (error) {
       console.error('Error al enviar la reserva:', error);
     }
@@ -40,20 +42,23 @@ const ReservaBarberia = () => {
     const telefono = prompt("Ingresa tu teléfono:");
     
     if (nombre && telefono) {
+      // Crear la fecha y establecer la hora seleccionada.
+      const fecha = new Date();
+      fecha.setHours(hora - 3, 0, 0, 0); // Restar 3 horas antes de enviar a la base de datos.
+      
       const reservaData = {
         ClienteNombre: nombre,
         ClienteTelefono: telefono,
-        FechaHora: new Date().toISOString(), // Aquí puedes modificar para la fecha real si es necesario
+        FechaHora: fecha.toISOString(), // Convertir a ISO para enviar a la base de datos.
         Barbero: barbero,
         Estado: 'Pendiente',
       };
-
       // Guardar la reserva en el store global
-      dispatch(addReserva({ barbero, hora, nombre, telefono }));
-
+      //dispatch(addReserva({ ...reservaData, ReservaId: data.ReservaId }));
+  
       // Enviar la reserva a la base de datos
       crearReservaEnDB(reservaData);
-
+  
       // Cambiar el estado del barbero a ocupado
       setEstadoBarberos(prev => ({
         ...prev,
@@ -64,6 +69,7 @@ const ReservaBarberia = () => {
       }));
     }
   };
+  
 
   return (
     <div className="reserva-barberia">

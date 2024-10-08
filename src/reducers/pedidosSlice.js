@@ -1,6 +1,7 @@
 // reducers/pedidosSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL3 } from '../config';
 
 const initialState = {
   pedidosSlice: [],
@@ -13,7 +14,7 @@ export const guardarPedido = createAsyncThunk(
   'pedidos/guardarPedido',
   async (pedido, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`http://localhost:5153/api/Pedidos/GuardarPedidos`, pedido);
+      const response = await axios.post(` ${API_BASE_URL3}/Pedidos/GuardarPedidos`, pedido);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -28,7 +29,7 @@ export const actualizarEstadoPedido = createAsyncThunk(
   'pedidos/actualizarEstadoPedido',
   async (pedido, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`http://localhost:5153/api/Pedidos/${pedido.Id}`, pedido);
+      const response = await axios.put(` ${API_BASE_URL3}/Pedidos/${pedido.Id}`, pedido);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);

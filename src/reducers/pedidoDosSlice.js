@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {API_BASE_URL3} from '../config';
 
 const initialState = {
   pedidos: [],
@@ -8,11 +9,12 @@ const initialState = {
 };
 
 // Acción asíncrona para guardar el pedido
+// local   --> http://localhost:5153/api
 export const guardarPedido = createAsyncThunk(
   'pedidos/guardarPedido',
   async (pedido, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`http://localhost:5153/api/Pedidos/GuardarPedidos`, pedido);
+      const response = await axios.post(`${API_BASE_URL3}/api/Pedidos/GuardarPedidos`, pedido);
       console.log("soy el pedido guardado despues del boton ", response.data);
       
       return response.data;

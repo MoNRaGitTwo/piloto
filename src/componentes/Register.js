@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL3 } from '../config';
 
 const Register = () => {
   const [nombre, setNombre] = useState('');
@@ -6,9 +7,10 @@ const Register = () => {
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
   const [deuda, setDeuda] = useState(0);
+  
 
   const handleRegister = async () => {
-    const response = await fetch('http://localhost:5153/api/users/register', {
+    const response = await fetch(`${API_BASE_URL3}/users/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ Nombre: nombre, Password: password, Direccion: direccion, Telefono: telefono, Deuda: deuda }),
