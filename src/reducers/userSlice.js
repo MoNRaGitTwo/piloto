@@ -17,7 +17,7 @@ export const actualizarDeudaAsync = createAsyncThunk(
       }
 
       const data = await response.json();
-      return { id, deuda: data.deudaActualizada }; // Retornamos los datos que se actualizaron
+      return { id, deuda: data.deudaActualizada }; // Retornamos los datos que se actualizaron    
     } catch (error) {
       return rejectWithValue(error.message);
     }

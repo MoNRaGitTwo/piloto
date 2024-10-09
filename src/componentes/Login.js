@@ -7,8 +7,8 @@ import {API_BASE_URL4}  from '../config';
 
 const Login = () => {
   // Inicializa con los valores 'admin'
-  const [nombre, setNombre] = useState('admin');
-  const [password, setPassword] = useState('admin');
+  const [nombre, setNombre] = useState();
+  const [password, setPassword] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
