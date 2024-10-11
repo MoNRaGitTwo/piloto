@@ -31,7 +31,7 @@ const App = () => {
   return (
     <Router>
       <div className="container">
-        <h1 className="my-4">Bienvenido a Piloto</h1>
+        <h1 className="my-4">Bienvenido a PedidosDespues</h1>
         <nav className="navbar navbar-expand-lg navbar-light bg-light mb-4">
           <div className="container-fluid">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">

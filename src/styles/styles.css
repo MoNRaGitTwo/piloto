@@ -22,14 +22,22 @@
 }
 
 .product-info {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.product-name,
-.product-price,
+.product-name{
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.product-price{
+  color: green;
+  margin-bottom: 5px;
+}
 .product-stock {
-  font-size: 1.2em;
-  margin-top: 10px;
+  color: red;
 }
 
 .btn-group {
@@ -76,5 +84,51 @@
 
 .low-stock-red {
   border: 2px solid red;
+}
+
+.carrito-button {
+  background-color: #8B0000 !important; /* Rojo oscuro */
+  color: white !important;
+  border-radius: 20px !important; /* Bordes redondeados */
+  padding: 10px 20px !important; /* Más ancho */
+  border: none !important;
+  cursor: pointer !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.carrito-button:hover {
+  background-color: #a30000 !important; /* Un rojo un poco más claro al pasar el mouse */
+}
+
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: #f9f9f9;
+  width: 180px; /* Ajusta el ancho según sea necesario */
+  justify-content: space-between; /* Espacio entre los botones y el valor */
+}
+
+.quantity-button {
+  background-color: #8B0000; /* Rojo oscuro */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.quantity-button:hover {
+  background-color: #a30000; /* Un rojo un poco más claro al pasar el mouse */
+}
+
+.quantity-value {
+  font-size: 1rem;
+  margin: 0 10px;
 }
 

@@ -1,9 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+
+
 const initialState = {
   user: null,
   isAdmin: false,
 };
+
 
 const authSlice = createSlice({
   name: 'auth',
@@ -16,6 +19,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAdmin = false;
+      // Limpia los datos del usuario y los pedidos aquí
+ 
     },
   },
 });

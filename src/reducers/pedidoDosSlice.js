@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {API_BASE_URL3} from '../config';
-
+/*
 const initialState = {
   pedidos: [],
   status: 'idle',
   error: null,
-};
+};*/
 
 // Acción asíncrona para guardar el pedido
 // local   --> http://localhost:5153/api
@@ -57,6 +57,11 @@ const pedidoDosSlice = createSlice({
   reducers: { 
     setPedidosDos: (state, action) => {
       state.pedidos = action.payload;
+      
+      
+    },
+    clearPedidos(state) {
+      state.pedidos = []; // Limpia los pedidos
     },    
     updateEstadoPedido: (state, action) => {
       const { pedidoId, nuevoEstado } = action.payload;
@@ -94,5 +99,5 @@ const pedidoDosSlice = createSlice({
   }
 });
 
-export const { setPedidosDos, addPedido, updateEstadoPedido, updatePedidoList } = pedidoDosSlice.actions;
+export const { setPedidosDos, addPedido, updateEstadoPedido, updatePedidoList , clearPedidos} = pedidoDosSlice.actions;
 export default pedidoDosSlice.reducer;

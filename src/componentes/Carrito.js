@@ -8,17 +8,27 @@ import '../styles/styles.css';
 
 const Carrito = () => {
   const dispatch = useDispatch();
-
   const carrito = useSelector((state) => state.storeCarrito.carritolice);
   const cantidad = useSelector((state) => state.storeCantidad);
-  const usuariosGlobalesLogueado = useSelector((state) => state.storeUser.usuarios);
+  const usuarioActual = useSelector((state) => state.storeUser.usuarios);
   const pedidosGlobales = useSelector((state) => state.pedidoDosStore.pedidos);
-
   const [mensajeExito, setMensajeExito] = useState('');
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
-  const usuarioActual = usuariosGlobalesLogueado[0];
-  const pedidosUsuarioActual = pedidosGlobales.filter((pedido) => pedido.UserId === usuarioActual.id);
+  const idUsuarioActual = usuarioActual[0]?.id;
+  const nombreUsuarioActual = usuarioActual[0]?.nombre;
+
+  
+
+  // Filtrar los pedidos del usuario actual
+  const pedidosUsuarioActual = pedidosGlobales.filter((pedido) => {
+    const userIdPedido = Number(pedido.UserId);
+    const userIdActual = Number(idUsuarioActual);    
+    
+    return userIdPedido === userIdActual;
+  });
+
+  
 
   const handleEliminarProducto = (productoId) => {
     dispatch(eliminarProducto(productoId));
@@ -34,9 +44,8 @@ const Carrito = () => {
     if (isLoading) return;
 
     const metodoPago = window.confirm('¿La compra es a crédito? (Aceptar para crédito, Cancelar para efectivo)');
-  
     const pedido = {
-      UserId: usuarioActual.id,
+      UserId: idUsuarioActual,
       FechaPedido: new Date().toISOString(),
       Total: totalCarrito,
       Estado: 'Pendiente',
@@ -51,20 +60,15 @@ const Carrito = () => {
     try {
       setIsLoading(true);
       await dispatch(guardarPedido(pedido)).unwrap();
-
       for (const producto of carrito) {
         const cantidadComprada = cantidad[producto.Id] || 1;
         await dispatch(reducirStockAsync({ id: producto.Id, cantidadComprada }));
       }
-
       if (metodoPago) {
-        const nuevaDeuda = usuarioActual.deuda + totalCarrito; // Sumar total del carrito a la deuda
-        dispatch(updateUser({ id: usuarioActual.id, deuda: nuevaDeuda }));
-
-        // Llamar a la acción asincrónica para actualizar la deuda en la base de datos
-        await dispatch(actualizarDeudaAsync({ id: usuarioActual.id, nuevaDeuda }));
+        const nuevaDeuda = usuarioActual[0].deuda + totalCarrito;
+        dispatch(updateUser({ id: idUsuarioActual, deuda: nuevaDeuda }));
+        await dispatch(actualizarDeudaAsync({ id: idUsuarioActual, nuevaDeuda }));
       }
-
       dispatch(clearCarrito());
       setMensajeExito('Pedido realizado con éxito');
     } catch (err) {
@@ -89,33 +93,32 @@ const Carrito = () => {
 
   return (
     <div className='container'>
-       <h1>Carrito</h1>
-    {mensajeExito && <p className='alert alert-success'>{mensajeExito}</p>}
-    <ul className='list-group'>
-      {carrito.length === 0 ? (
-        <p>No hay productos en el carrito</p>
-      ) : (
-        carrito.map((producto) => {
-          const cantidadComprada = cantidad[producto.Id] || 1; // Obtén la cantidad desde el store o usa 1 por defecto
-          const totalProducto = producto.Price * cantidadComprada; // Calcula el total por producto
-          return (
-            <li key={producto.Id} className='list-group-item'>
-              <span>{producto.Name}</span> - 
-              <span>$ {producto.Price}</span> - 
-              <span>Cantidad: {cantidadComprada}</span> - 
-              <span>Total: $ {totalProducto}</span>
-              <button
-                className='btn btn-danger ml-3'
-                onClick={() => handleEliminarProducto(producto.Id)}
-              >
-                Eliminar
-              </button>
-            </li>
-          );
-        })
-      )}
-      
-    </ul>
+      <h1>Carrito</h1>
+      {mensajeExito && <p className='alert alert-success'>{mensajeExito}</p>}
+      <ul className='list-group'>
+        {carrito.length === 0 ? (
+          <p>No hay productos en el carrito</p>
+        ) : (
+          carrito.map((producto) => {
+            const cantidadComprada = cantidad[producto.Id] || 1;
+            const totalProducto = producto.Price * cantidadComprada;
+            return (
+              <li key={producto.Id} className='list-group-item'>
+                <span>{producto.Name}</span> - 
+                <span>$ {producto.Price}</span> - 
+                <span>Cantidad: {cantidadComprada}</span> - 
+                <span>Total: $ {totalProducto}</span>
+                <button
+                  className='btn btn-danger ml-3'
+                  onClick={() => handleEliminarProducto(producto.Id)}
+                >
+                  Eliminar
+                </button>
+              </li>
+            );
+          })
+        )}
+      </ul>
       {carrito.length > 0 && (
         <div className='d-flex justify-content-between align-items-center mt-3'>
           <span>Total a pagar: $ {totalCarrito.toFixed(2)}</span>
@@ -124,7 +127,6 @@ const Carrito = () => {
           </button>
         </div>
       )}
-
       {pedidosUsuarioActual.length > 0 && (
         <div>
           <h2>Mis Pedidos</h2>
@@ -139,7 +141,7 @@ const Carrito = () => {
             <tbody>
               {pedidosUsuarioActual.map((pedido) => (
                 <tr key={pedido.Id}>
-                  <td>{usuarioActual.nombre}</td>
+                  <td>{nombreUsuarioActual}</td>
                   <td>
                     <ul>
                       {(pedido.DetallesPedidos.$values && pedido.DetallesPedidos.$values.length > 0) ? (

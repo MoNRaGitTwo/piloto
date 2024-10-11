@@ -13,8 +13,7 @@ import { addProductoCarrito } from '../reducers/carritoSlice';
 import { API_BASE_URL5 } from '../config';
 import EditProductForm from './EditProductoFrom';
 import ProductCarousel from './Carrusel';
-import { incrementarCantidad, disminuirCantidad,addProductoCarritoCantidad } from '../reducers/cantidadSlice';
-
+import { incrementarCantidad, disminuirCantidad, addProductoCarritoCantidad } from '../reducers/cantidadSlice';
 import '../styles/styles.css';
 
 function Productos() {
@@ -23,11 +22,14 @@ function Productos() {
   const carrito = useSelector((state) => state.storeCarrito.carritolice);
   const productosComprar = useSelector((state) => state.listaProductosComprar.productosComprar);
   const productosSugeridos = useSelector((state) => state.storeListaSugerida.productosSugeridos);
-  
+  const isAdmin = useSelector((state) => state.storeAuth.isAdmin);
+  const cantidad = useSelector((state) => state.storeCantidad);
+
   const [editedProduct, setEditedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const cantidad = useSelector((state) => state.storeCantidad);
+  const [showQuantity, setShowQuantity] = useState({}); // Control de visibilidad de botones de cantidad
+
   const productsPerPage = 10;
 
   useEffect(() => {
@@ -64,12 +66,10 @@ function Productos() {
 
   const handleGenerateList = () => {
     const lowStockProductos = productos.filter((producto) => producto.Stock <= 5);
-    console.log("soy lista sugerida", lowStockProductos);
     dispatch(addProductoSugerido(lowStockProductos));
   };
 
   const handleDelete = (Id) => {
-    console.log('Intentando eliminar producto con ID:', Id);
     dispatch(deleteProductAsync(Id));
   };
 
@@ -95,37 +95,26 @@ function Productos() {
     const quantity = parseInt(prompt('Ingrese la cantidad a vender:'), 10);
     if (!isNaN(quantity) && quantity > 0 && quantity <= producto.Stock) {
       const updatedStock = producto.Stock - quantity;
-      console.log('Datos de venta:', { id: producto.Id, nuevoStock: updatedStock });
       dispatch(updateStockAsync({ id: producto.Id, nuevoStock: updatedStock }));
     } else {
       alert('Cantidad inválida o insuficiente stock');
     }
   };
 
-  const handleAddToComprar = (producto) => {
-    if (!productosComprar.some((p) => p.Id === producto.Id)) {
-      dispatch(addProductoComprar(producto));
-    }
-  };
-
-  const handleAddToSugeridos = (producto) => {
-    if (!productosSugeridos.some((p) => p.Id === producto.Id)) {
-      dispatch(addProductoSugerido(producto));
-    }
-  };
-
   const handleAddToCarrito = (producto) => {
-    const cantidadSeleccionada = cantidad[producto.Id] || 1; // Obtén la cantidad actual del store
-  
-    // Guarda la cantidad en el estado de cantidad
+    const cantidadSeleccionada = cantidad[producto.Id] || 1;
     dispatch(addProductoCarritoCantidad({ Id: producto.Id, cantidad: cantidadSeleccionada }));
-  
+
     if (!carrito.some((p) => p.Id === producto.Id)) {
       dispatch(addProductoCarrito({
         ...producto,
-        cantidad: cantidadSeleccionada, // Añade la cantidad al producto que se guarda en el carrito
+        cantidad: cantidadSeleccionada,
       }));
     }
+    setShowQuantity((prevState) => ({
+      ...prevState,
+      [producto.Id]: true,
+    }));
   };
 
   const filteredProductos = productos.filter((producto) => {
@@ -135,7 +124,6 @@ function Productos() {
     return producto.Name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  // Calcular índices para la paginación
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProductos.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -151,9 +139,9 @@ function Productos() {
       {productos.map((producto) => {
         let stockClass = "";
         if (producto.Stock < 3) {
-          stockClass = "low-stock-red"; // Menor a 3, rojo
+          stockClass = "low-stock-red";
         } else if (producto.Stock < 5) {
-          stockClass = "low-stock-yellow"; // Menor a 5, amarillo
+          stockClass = "low-stock-yellow";
         }
   
         return (
@@ -169,44 +157,45 @@ function Productos() {
               <span className="product-stock">Stock: {producto.Stock}</span>
             </div>
             <div className="btn-group">
-              <button className='btn btn-outline-secondary btn-sm' onClick={() => handleEdit(producto)}>
-                Editar
-              </button>
-              <button className='btn btn-outline-secondary btn-sm' onClick={() => handleSell(producto)}>
-                Vender
-              </button>
-              <button className='btn btn-outline-secondary btn-sm' onClick={() => handleDelete(producto.Id)}>
-                Eliminar
-              </button>
-              <button
-                className='btn btn-outline-secondary btn-sm'
-                onClick={() => handleAddToComprar(producto)}
-                disabled={productosComprar.some((p) => p.Id === producto.Id)}
-              >
-                Agregar a comprar
-              </button>
-              <button
-                className='btn btn-outline-secondary btn-sm'
-                onClick={() => handleAddToCarrito(producto)}
-                disabled={carrito.some((p) => p.Id === producto.Id)}
-              >
-                Carrito
-              </button>
-            </div>
-            <div className="product-quantity">
-              <button
-                className='btn btn-outline-secondary btn-sm'
-                onClick={() => dispatch(disminuirCantidad({ id: producto.Id }))}>
-                -
-              </button>
-              <span className="quantity-value">
-                {cantidad[producto.Id] || 1}
-              </span>
-              <button
-                className='btn btn-outline-secondary btn-sm'
-                onClick={() => dispatch(incrementarCantidad({ id: producto.Id }))}>
-                +
-              </button>
+              {showQuantity[producto.Id] ? (
+                <div className="quantity-control">
+                  <button
+                    className="quantity-button"
+                    onClick={() => dispatch(incrementarCantidad({ id: producto.Id }))}
+                  >
+                    +
+                  </button>
+                  <span className="quantity-value">
+                    {cantidad[producto.Id] || 1}
+                  </span>
+                  <button
+                    className="quantity-button"
+                    onClick={() => dispatch(disminuirCantidad({ id: producto.Id }))}
+                  >
+                    -
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="btn carrito-button"
+                  onClick={() => handleAddToCarrito(producto)}
+                >
+                 Agregar a Carrito
+                </button>
+              )}
+              {isAdmin && (
+                <>
+                  <button className="btn btn-outline-secondary btn-sm" onClick={() => handleEdit(producto)}>
+                    Editar
+                  </button>
+                  <button className="btn btn-outline-secondary btn-sm" onClick={() => handleSell(producto)}>
+                    Vender
+                  </button>
+                  <button className="btn btn-outline-secondary btn-sm" onClick={() => handleDelete(producto.Id)}>
+                    Eliminar
+                  </button>
+                </>
+              )}
             </div>
           </div>
         );
@@ -233,7 +222,6 @@ function Productos() {
       {editedProduct && <EditProductForm product={editedProduct} onSubmit={handleEditSubmit} onCancel={() => setEditedProduct(null)} />}
       {renderProductList(currentProducts)}
 
-      {/* Paginación */}
       {filteredProductos.length > productsPerPage && (
         <nav>
           <ul className="pagination">

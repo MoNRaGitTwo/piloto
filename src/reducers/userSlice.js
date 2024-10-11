@@ -33,7 +33,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action) {
-      console.log("Usuario logueado: ", action.payload);
+      console.log("Usuario logueado slice: ", action.payload);
       state.usuarios.push(action.payload);
     },
     clearUser() {

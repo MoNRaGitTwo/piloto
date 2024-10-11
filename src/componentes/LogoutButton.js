@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../reducers/authSlice';
+import { clearUser } from '../reducers/userSlice';
+import { clearPedidos } from '../reducers/pedidoDosSlice';
 
 const LogoutButton = () => {
   const navigate = useNavigate();
@@ -9,6 +11,8 @@ const LogoutButton = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(clearUser());
+    dispatch(clearPedidos());
     navigate('/login');
   };
 

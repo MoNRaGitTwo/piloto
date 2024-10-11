@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from '../reducers/authSlice';
-import { setUser } from '../reducers/userSlice';  // Importa la acción setUser
+import { setUser } from '../reducers/userSlice'; // Importa la acción setUser
+import { setPedidosDos } from '../reducers/pedidoDosSlice'; // Importa la acción para establecer pedidos
 import { useNavigate } from 'react-router-dom';
-import {API_BASE_URL4}  from '../config';
+import axios from 'axios'; // Asegúrate de tener axios importado
+import { API_BASE_URL4, API_BASE_URL3 } from '../config'; // Asegúrate de importar tu URL
 
 const Login = () => {
   // Inicializa con los valores 'admin'
-  const [nombre, setNombre] = useState();
-  const [password, setPassword] = useState();
+  const [nombre, setNombre] = useState('');
+  const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,7 +24,7 @@ const Login = () => {
     const data = await response.json();
     if (response.ok) {
       const isAdmin = nombre === 'admin' && password === 'admin';
-      
+
       // Despacha la acción setUser con los datos del usuario
       dispatch(setUser({
         id: data.id,
@@ -31,6 +33,11 @@ const Login = () => {
         telefono: data.telefono,
         deuda: data.deuda,
       }));
+
+      // Obtener pedidos después del login
+      const responsePedidos = await axios.get(`${API_BASE_URL3}/api/Pedidos`);
+      const dataPedidos = responsePedidos.data.$values || [];
+      dispatch(setPedidosDos(dataPedidos)); // Agrega los pedidos al store global
 
       dispatch(login({ user: nombre, isAdmin }));
       navigate('/mostrar-productos');
