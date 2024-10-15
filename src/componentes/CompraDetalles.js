@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL3 } from '../config';
 import axios from 'axios';
 
 const CompraDetalle = () => {
@@ -17,7 +18,7 @@ const CompraDetalle = () => {
     setError(null);
 
     try {
-      const response = await axios.get(`http://localhost:5153/api/Pedidos/user/${userId}`);
+      const response = await axios.get(`${API_BASE_URL3}/api/Pedidos/user/${userId}`);
       console.log("Soy los pedidos con detalle en CompraDetalle", response.data);
 
       // Accedemos al primer elemento si hay datos
