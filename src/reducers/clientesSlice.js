@@ -6,7 +6,7 @@ export const fetchClientes = createAsyncThunk(
     'clientes/fetchClientes',
     async (_, thunkAPI) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/clientes/TodosClientes`);
+            const response = await axios.get(`${API_BASE_URL3}/clientes/TodosClientes`);
             return response.data;
         } catch (error) {
             return thunkAPI.rejectWithValue(error.response.data);
@@ -54,6 +54,8 @@ const clientesSlice = createSlice({
     reducers: {
         setClientes: (state, action) => {
             state.clientesSlice = action.payload;
+            console.log("soy el cliente en el clienteSlice", action.payload);
+            
         }
     },
     extraReducers: builder => {

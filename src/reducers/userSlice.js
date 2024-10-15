@@ -26,6 +26,7 @@ export const actualizarDeudaAsync = createAsyncThunk(
 
 const initialState = {
   usuarios: [],
+  todosUsuarios: [],
 };
 
 const userSlice = createSlice({
@@ -33,8 +34,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action) {
-      console.log("Usuario logueado slice: ", action.payload);
+      //console.log("Usuario logueado slice: ", action.payload);
       state.usuarios.push(action.payload);
+    },
+    setTodosUser(state, action) {
+      //console.log("todos los usarios en el slice: ", action.payload);
+      state.todosUsuarios = action.payload;
     },
     clearUser() {
       return initialState;
@@ -61,5 +66,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { setUser, clearUser, updateUser } = userSlice.actions;
+export const { setUser, clearUser, updateUser,setTodosUser } = userSlice.actions;
 export default userSlice.reducer;

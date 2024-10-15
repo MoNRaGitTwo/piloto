@@ -1,86 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchClientes } from '../reducers/clientesSlice';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { API_BASE_URL2 } from '../config';
 
 const CompraDetalle = () => {
-  const [selectedCliente, setSelectedCliente] = useState('');
-  const [compras, setCompras] = useState([]);
-  const clientesGlobales = useSelector(state => state.storeClientes.clientesSlice);
-  const dispatch = useDispatch();
+  const [pedido, setPedido] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState('');
 
-  useEffect(() => {
-    dispatch(fetchClientes());
-  }, [dispatch]);
+  const todosLosUsuarios = useSelector((state) => state.storeUser.todosUsuarios);
+  console.log("Soy todos los usuarios, busco ID", todosLosUsuarios);
 
-  const handleClienteChange = async (event) => {
-    const clienteId = event.target.value;
-    setSelectedCliente(clienteId);
+  const fetchPedido = async (userId) => {
+    console.log("Entrando a fetchPedido con userId:", userId); // Verifica si se ejecuta
+    setLoading(true);
+    setError(null);
 
-    if (clienteId) {
-      try {
-        const response = await axios.get(`${API_BASE_URL2}/ObtenerComprasCliente/${clienteId}`, {
-            
-          headers: {
-            'ngrok-skip-browser-warning': 'true'  // Añade este parámetro
-          }
-        });
+    try {
+      const response = await axios.get(`http://localhost:5153/api/Pedidos/user/${userId}`);
+      console.log("Soy los pedidos con detalle en CompraDetalle", response.data);
 
-        const comprasData = Array.isArray(response.data) ? response.data : [response.data];
-        setCompras(comprasData);
-      } catch (error) {
-        console.error('Error al obtener detalles de compra:', error);
+      // Accedemos al primer elemento si hay datos
+      if (response.data.$values && response.data.$values.length > 0) {
+        setPedido(response.data.$values[0]);
+      } else {
+        setPedido(null);
       }
+    } catch (error) {
+      console.error("Error al cargar los detalles del pedido:", error);
+      setError('Error al cargar los detalles del pedido.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUserChange = (e) => {
+    const userId = e.target.value.trim(); // Elimina espacios adicionales
+    console.log("Soy el userId", userId); // Verifica que solo se imprima el ID
+    setSelectedUserId(userId);
+
+    // Verifica si el userId es un número válido
+    if (userId && !isNaN(userId)) {
+      fetchPedido(userId);
     } else {
-      setCompras([]);
+      setPedido(null);
+      console.log("El userId no es válido:", userId); // Para depuración
     }
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Detalles de Compras por Cliente</h2>
-      <div className="form-group">
-        <label htmlFor="clienteSelect">Seleccionar Cliente:</label>
-        <select
-          id="clienteSelect"
-          className="form-control"
-          value={selectedCliente}
-          onChange={handleClienteChange}
-        >
-          <option value="">Seleccione un cliente</option>
-          {clientesGlobales.map(cliente => (
-            <option key={cliente.Id} value={cliente.Id}>{cliente.Nombre}</option>
-          ))}
-        </select>
-      </div>
+    <div>
+      <h2>Detalle de Compra</h2>
 
-      {compras.length > 0 ? (
+      <label htmlFor="user-select">Seleccione un usuario:</label>
+      <select id="user-select" value={selectedUserId} onChange={handleUserChange}>
+        <option value="">Seleccione un usuario</option>
+        {todosLosUsuarios.map((usuario) => (
+          <option key={usuario.Id} value={usuario.Id}>
+            {usuario.Nombre} (ID: {usuario.Id}) {/* Asegúrate de usar el UserId correcto */}
+          </option>
+        ))}
+      </select>
+
+      {loading && <p>Cargando...</p>}
+      {error && <p>{error}</p>}
+
+      {pedido && (
         <div>
-          <h3>Detalle de Compras:</h3>
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Detalle</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {compras.map((compra, index) => (
-                <tr key={index}>
-                  <td>{new Date(compra.Fecha).toLocaleDateString()}</td>
-                  <td>{compra.Detalle}</td>
-                  <td>{compra.Total ? `$${compra.Total.toFixed(2)}` : 'N/A'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h3>Detalle del Pedido #{pedido.Id}</h3>
+          <p>Usuario ID: {pedido.UserId}</p>
+          <p>Fecha: {new Date(pedido.FechaPedido).toLocaleDateString()}</p>
+          <p>Total: ${pedido.Total.toFixed(2)}</p>
+          <p>Estado: {pedido.Estado}</p>
+
+          <h4>Detalles del Pedido</h4>
+          <ul>
+            {pedido.DetallesPedidos.$values.map((detalle) => (
+              <li key={detalle.Id}>
+                <p>Producto: {detalle.Nombre}</p>
+                <p>Cantidad: {detalle.Cantidad}</p>
+                <p>Precio: ${detalle.Precio.toFixed(2)}</p>
+                <p>Subtotal: ${(detalle.Cantidad * detalle.Precio).toFixed(2)}</p>
+              </li>
+            ))}
+          </ul>
         </div>
-      ) : selectedCliente ? (
-        <p>No hay compras registradas para este cliente.</p>
-      ) : (
-        <p>Seleccione un cliente para ver los detalles de sus compras.</p>
       )}
     </div>
   );

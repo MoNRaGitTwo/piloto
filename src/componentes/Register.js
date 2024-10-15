@@ -10,7 +10,7 @@ const Register = () => {
   
 
   const handleRegister = async () => {
-    const response = await fetch(`${API_BASE_URL3}/users/register`, {
+    const response = await fetch(`${API_BASE_URL3}/api/users/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ Nombre: nombre, Password: password, Direccion: direccion, Telefono: telefono, Deuda: deuda }),

@@ -9,8 +9,8 @@ import { API_BASE_URL4, API_BASE_URL3 } from '../config'; // Asegúrate de impor
 
 const Login = () => {
   // Inicializa con los valores 'admin'
-  const [nombre, setNombre] = useState('');
-  const [password, setPassword] = useState('');
+  const [nombre, setNombre] = useState('admin');
+  const [password, setPassword] = useState('admin');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

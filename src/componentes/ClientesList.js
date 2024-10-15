@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { setClientes } from '../reducers/clientesSlice';
+import { setUser ,setTodosUser} from '../reducers/userSlice';
 import { actualizarDeudaAsync } from '../reducers/userSlice'; // Importar la acción asíncrona
 import { API_BASE_URL3 } from '../config';
 
@@ -16,14 +16,14 @@ const ClientesList = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await axios.get(` ${API_BASE_URL3}/Users`, {
+        const response = await axios.get(` ${API_BASE_URL3}/api/Users`, {
           headers: {
             'ngrok-skip-browser-warning': 'true'
           }
         });
-        console.log("Respuesta de la API:", response.data); // Ver la respuesta en la consola
+        //console.log("Respuesta de la API:", response.data); // Ver la respuesta en la consola
         setClientesLocal(response.data.$values); // Acceder a los clientes dentro de $values
-        dispatch(setClientes(response.data.$values)); // Actualizar el estado global si es necesario
+        dispatch(setTodosUser(response.data.$values)); // Actualizar el estado global si es necesario
         setLoading(false);
       } catch (error) {
         setError(error.message);

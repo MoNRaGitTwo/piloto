@@ -91,7 +91,7 @@ const PedidosDos = () => {
   const handleEliminarPedido = async (pedidoId) => {
     try {
       // Eliminar el pedido del servidor (primera eliminación)
-      await axios.delete(`${API_BASE_URL3}/Pedidos/${pedidoId}`);
+      await axios.delete(`${API_BASE_URL3}/api/Pedidos/${pedidoId}`);
   
       // Eliminar el pedido de la lista local
       const updatedPedidos = pedidos.filter(pedido => pedido.Id !== pedidoId);
