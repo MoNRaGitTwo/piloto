@@ -54,7 +54,7 @@ const CompraDetalle = () => {
 
       <label htmlFor="user-select">Seleccione un usuario:</label>
       <select id="user-select" value={selectedUserId} onChange={handleUserChange}>
-        <option value="">Seleccione un usuario</option>
+        <option value="">Seleccione unn usuario</option>
         {todosLosUsuarios.map((usuario) => (
           <option key={usuario.Id} value={usuario.Id}>
             {usuario.Nombre} (ID: {usuario.Id}) {/* Asegúrate de usar el UserId correcto */}
