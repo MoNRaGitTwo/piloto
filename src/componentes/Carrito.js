@@ -4,6 +4,7 @@ import { guardarPedido } from '../reducers/pedidoDosSlice';
 import { reducirStockAsync } from '../reducers/productosSlice';
 import { clearCarrito, eliminarProducto } from '../reducers/carritoSlice';
 import { actualizarDeudaAsync, updateUser } from '../reducers/userSlice';
+import { actualizarCajaCredito, actualizarMontoCaja } from '../reducers/cajaSlice'; // Importa las acciones de caja
 import '../styles/styles.css';
 
 const Carrito = () => {
@@ -14,36 +15,40 @@ const Carrito = () => {
   const pedidosGlobales = useSelector((state) => state.pedidoDosStore.pedidos);
   const [mensajeExito, setMensajeExito] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [metodoPago, setMetodoPago] = useState(null); // Nuevo estado para método de pago
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false); // Estado para mostrar la tarjeta
 
   const idUsuarioActual = usuarioActual[0]?.id;
   const nombreUsuarioActual = usuarioActual[0]?.nombre;
 
-  
-
-  // Filtrar los pedidos del usuario actual
   const pedidosUsuarioActual = pedidosGlobales.filter((pedido) => {
     const userIdPedido = Number(pedido.UserId);
     const userIdActual = Number(idUsuarioActual);    
-    
     return userIdPedido === userIdActual;
   });
-
-  
 
   const handleEliminarProducto = (productoId) => {
     dispatch(eliminarProducto(productoId));
   };
 
-  // Calcular el total del carrito
   const totalCarrito = carrito.reduce((total, producto) => {
     const cantidadComprada = cantidad[producto.Id] || 1;
     return total + producto.Price * cantidadComprada;
   }, 0);
 
-  const handleComprar = async () => {
-    if (isLoading) return;
+  const handleSeleccionMetodo = (metodo) => {
+    setMetodoPago(metodo);
+  };
 
-    const metodoPago = window.confirm('¿La compra es a crédito? (Aceptar para crédito, Cancelar para efectivo)');
+  const handleComprar = () => {
+    if (carrito.length > 0) {
+      setMostrarTarjeta(true); // Mostrar la tarjeta de métodos de pago después de hacer clic en comprar
+    }
+  };
+
+  const handleConfirmarCompra = async () => {
+    if (isLoading || !metodoPago) return;
+
     const pedido = {
       UserId: idUsuarioActual,
       FechaPedido: new Date().toISOString(),
@@ -64,30 +69,24 @@ const Carrito = () => {
         const cantidadComprada = cantidad[producto.Id] || 1;
         await dispatch(reducirStockAsync({ id: producto.Id, cantidadComprada }));
       }
-      if (metodoPago) {
+
+      if (metodoPago === 'credito') {
         const nuevaDeuda = usuarioActual[0].deuda + totalCarrito;
         dispatch(updateUser({ id: idUsuarioActual, deuda: nuevaDeuda }));
         await dispatch(actualizarDeudaAsync({ id: idUsuarioActual, nuevaDeuda }));
+        dispatch(actualizarCajaCredito({ amount: totalCarrito })); // Sumar a la caja de crédito
+      } else if (metodoPago === 'efectivo') {
+        dispatch(actualizarMontoCaja({ amount: totalCarrito })); // Sumar a la caja de contado
       }
+
       dispatch(clearCarrito());
       setMensajeExito('Pedido realizado con éxito');
+      setMetodoPago(null);
+      setMostrarTarjeta(false); // Ocultar la tarjeta después de confirmar el pedido
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const getEstadoClase = (estado) => {
-    switch (estado) {
-      case 'Pendiente':
-        return 'btn btn-secondary';
-      case 'En proceso':
-        return 'btn btn-warning';
-      case 'Listo':
-        return 'btn btn-success';
-      default:
-        return 'btn btn-secondary';
     }
   };
 
@@ -119,6 +118,7 @@ const Carrito = () => {
           })
         )}
       </ul>
+
       {carrito.length > 0 && (
         <div className='d-flex justify-content-between align-items-center mt-3'>
           <span>Total a pagar: $ {totalCarrito.toFixed(2)}</span>
@@ -127,43 +127,25 @@ const Carrito = () => {
           </button>
         </div>
       )}
-      {pedidosUsuarioActual.length > 0 && (
-        <div>
-          <h2>Mis Pedidos</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Cliente Nombre</th>
-                <th>Detalles</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pedidosUsuarioActual.map((pedido) => (
-                <tr key={pedido.Id}>
-                  <td>{nombreUsuarioActual}</td>
-                  <td>
-                    <ul>
-                      {(pedido.DetallesPedidos.$values && pedido.DetallesPedidos.$values.length > 0) ? (
-                        pedido.DetallesPedidos.$values.map((detalle, index) => (
-                          <li key={`${pedido.Id}-${detalle.ProductoId}-${index}`}>
-                            <strong>Producto:</strong> {detalle.Nombre}, <strong>Precio:</strong> {detalle.Precio} MXN, <strong>Cantidad:</strong> {detalle.Cantidad}
-                          </li>
-                        ))
-                      ) : (
-                        <li>No hay detalles disponibles</li>
-                      )}
-                    </ul>
-                  </td>
-                  <td>
-                    <button className={getEstadoClase(pedido.Estado)} disabled>
-                      {pedido.Estado}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+      {mostrarTarjeta && (
+        <div className='tarjeta-pago'>
+          <h3>Métodos de Pago</h3>
+          <button
+            className={`btn btn-primary ${metodoPago === 'credito' ? 'active' : ''}`}
+            onClick={() => handleSeleccionMetodo('credito')}
+          >
+            Crédito
+          </button>
+          <button
+            className={`btn btn-primary ${metodoPago === 'efectivo' ? 'active' : ''} ml-2`}
+            onClick={() => handleSeleccionMetodo('efectivo')}
+          >
+            Efectivo
+          </button>
+          <button className='btn btn-success mt-3' onClick={handleConfirmarCompra}>
+            Confirmar Compra
+          </button>
         </div>
       )}
     </div>
