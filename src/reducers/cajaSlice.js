@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL3 } from '../config';
 
 // Acción asíncrona para guardar la caja en la base de datos
 export const guardarCajaAsync = createAsyncThunk(
@@ -13,7 +14,7 @@ export const guardarCajaAsync = createAsyncThunk(
 
     try {
       // Reemplaza la URL con la dirección correcta de tu API
-      const response = await axios.post('http://localhost:5153/api/Caja', cajaData);
+      const response = await axios.post(`${API_BASE_URL3}/api/Caja/guardarCaja`, cajaData);
       return response.data;
     } catch (error) {
       console.error('Error al guardar la caja en la base de datos:', error);
