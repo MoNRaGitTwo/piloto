@@ -3,17 +3,19 @@ import axios from 'axios';
 import { API_BASE_URL3 } from '../config';
 
 // Acción asíncrona para guardar la caja en la base de datos
+
 export const guardarCajaAsync = createAsyncThunk(
   'caja/guardarCajaAsync',
   async (_, { getState }) => {
     const { cajaContado, cajaCredito } = getState().storeCaja;
     const cajaData = {
-      cajaContado,
-      cajaCredito,
+      MontoEfectivo: cajaContado,
+      MontoCredito: cajaCredito,
     };
 
     try {
       // Reemplaza la URL con la dirección correcta de tu API
+      console.log('Datos que se envían a la API de la Caja:', cajaData);
       const response = await axios.post(`${API_BASE_URL3}/api/Caja/guardarCaja`, cajaData);
       return response.data;
     } catch (error) {
@@ -26,11 +28,13 @@ export const guardarCajaAsync = createAsyncThunk(
 export const cajaSlice = createSlice({
   name: 'caja',
   initialState: {
-    cajaContado: 1000,
+    cajaContado: 0,
     cajaCredito: 0,
   },
   reducers: {
     actualizarMontoCaja: (state, action) => {
+      console.log("soy caja contado" , action.payload);
+      
       const monto = action.payload.amount || 0;
       state.cajaContado += monto;
     },
