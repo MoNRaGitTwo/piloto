@@ -1,28 +1,28 @@
-// src/components/CajaManager.js
-import React from 'react';
-import { useSelector,useDispatch } from 'react-redux';
-import { guardarCajaAsync } from '../reducers/cajaSlice';
+
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { obtenerCajaAsync } from '../reducers/cajaSlice';
 
 const CajaManager = () => {
-  const montoCaja = useSelector(state => state.storeCaja.cajaContado); // Accede correctamente al estado de Redux
-  const montoCajaCredito = useSelector(state => state.storeCaja.cajaCredito); // Accede correctamente al estado de Redux
   const dispatch = useDispatch();
+  
+  // Selecciona los valores de la caja desde el store
+  const cajaContado = useSelector((state) => state.storeCaja.cajaContado);
+  const cajaCredito = useSelector((state) => state.storeCaja.cajaCredito);
+  //const gastos = useSelector((state) => state.storeCaja.gastos);
+  //const extra = useSelector((state) => state.storeCaja.extra);
 
-  // Verificar si montoCaja tiene un valor antes de usarlo
-  const montoCajaFormateado = montoCaja
+  // Realiza una llamada para obtener la caja al montar el componente
+  useEffect(() => {
+    dispatch(obtenerCajaAsync());
+  }, [dispatch]);
 
-
-  const handleGuardarCaja = () => {
-    dispatch(guardarCajaAsync());
-  };
-
+  // Muestra los valores de la caja
   return (
-    <div>
-      <h3>Monto en caja: ${montoCajaFormateado}</h3>
-      <h3>Monto en caja credito: ${montoCajaCredito}</h3>
-      <button className='btn btn-secondary' onClick={handleGuardarCaja}>
-        Guardar Caja
-      </button>
+    <div className="caja-manager">
+      <h2>Administración de Caja</h2>
+      <p><strong>Montos en Efectivo:</strong> ${cajaContado}</p>
+      <p><strong>Montos en Crédito:</strong> ${cajaCredito}</p>     
     </div>
   );
 };

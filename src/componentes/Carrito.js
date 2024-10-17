@@ -4,7 +4,7 @@ import { guardarPedido } from '../reducers/pedidoDosSlice';
 import { reducirStockAsync } from '../reducers/productosSlice';
 import { clearCarrito, eliminarProducto } from '../reducers/carritoSlice';
 import { actualizarDeudaAsync, updateUser } from '../reducers/userSlice';
-import { actualizarCajaCredito, actualizarMontoCaja } from '../reducers/cajaSlice'; // Importa las acciones de caja
+import {  actualizarCajaAsync, obtenerCajaAsync } from '../reducers/cajaSlice'; // Importa las acciones de caja
 import '../styles/styles.css';
 
 const Carrito = () => {
@@ -12,20 +12,21 @@ const Carrito = () => {
   const carrito = useSelector((state) => state.storeCarrito.carritolice);
   const cantidad = useSelector((state) => state.storeCantidad);
   const usuarioActual = useSelector((state) => state.storeUser.usuarios);
-  const pedidosGlobales = useSelector((state) => state.pedidoDosStore.pedidos);
+  //const pedidosGlobales = useSelector((state) => state.pedidoDosStore.pedidos);
   const [mensajeExito, setMensajeExito] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [metodoPago, setMetodoPago] = useState(null); // Nuevo estado para método de pago
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false); // Estado para mostrar la tarjeta
 
   const idUsuarioActual = usuarioActual[0]?.id;
-  const nombreUsuarioActual = usuarioActual[0]?.nombre;
+//const nombreUsuarioActual = usuarioActual[0]?.nombre;
 
+/*
   const pedidosUsuarioActual = pedidosGlobales.filter((pedido) => {
     const userIdPedido = Number(pedido.UserId);
-    const userIdActual = Number(idUsuarioActual);    
+    const userIdActual = Number(idUsuarioActual);
     return userIdPedido === userIdActual;
-  });
+  });*/
 
   const handleEliminarProducto = (productoId) => {
     dispatch(eliminarProducto(productoId));
@@ -70,24 +71,39 @@ const Carrito = () => {
         await dispatch(reducirStockAsync({ id: producto.Id, cantidadComprada }));
       }
 
+      // Define montos solo según el método de pago seleccionado
+      let montoEfectivo = 0;
+      let montoCredito = 0;
+      if (metodoPago === 'efectivo') {
+        montoEfectivo = totalCarrito;
+      } else if (metodoPago === 'credito') {
+        montoCredito = totalCarrito;
+      }
+
+      // Llama a la acción para actualizar la caja
+      await dispatch(actualizarCajaAsync({ montoEfectivo, montoCredito }));
+
       if (metodoPago === 'credito') {
         const nuevaDeuda = usuarioActual[0].deuda + totalCarrito;
         dispatch(updateUser({ id: idUsuarioActual, deuda: nuevaDeuda }));
         await dispatch(actualizarDeudaAsync({ id: idUsuarioActual, nuevaDeuda }));
-        dispatch(actualizarCajaCredito({ amount: totalCarrito })); // Sumar a la caja de crédito
-      } else if (metodoPago === 'efectivo') {
-        dispatch(actualizarMontoCaja({ amount: totalCarrito })); // Sumar a la caja de contado
       }
+
+      dispatch(obtenerCajaAsync());
 
       dispatch(clearCarrito());
       setMensajeExito('Pedido realizado con éxito');
       setMetodoPago(null);
       setMostrarTarjeta(false); // Ocultar la tarjeta después de confirmar el pedido
+      console.log('Método de pago seleccionado:', metodoPago);
+      console.log('Monto efectivo enviado:', montoEfectivo);
+      console.log('Monto crédito enviado:', montoCredito);
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
+
   };
 
   return (
@@ -103,9 +119,9 @@ const Carrito = () => {
             const totalProducto = producto.Price * cantidadComprada;
             return (
               <li key={producto.Id} className='list-group-item'>
-                <span>{producto.Name}</span> - 
-                <span>$ {producto.Price}</span> - 
-                <span>Cantidad: {cantidadComprada}</span> - 
+                <span>{producto.Name}</span> -
+                <span>$ {producto.Price}</span> -
+                <span>Cantidad: {cantidadComprada}</span> -
                 <span>Total: $ {totalProducto}</span>
                 <button
                   className='btn btn-danger ml-3'
