@@ -42,7 +42,7 @@ export const actualizarCajaAsync = createAsyncThunk(
       const response = await axios.put(`${API_BASE_URL3}/api/Caja/editarCaja`, cajaData);
       return response.data;
     } catch (error) {
-      console.error('Error al actualizar la caja en la base de datos:', error);
+      console.error('Error al actualizar la caja en la base deee datos:', error);
       throw error;
     }
   }
