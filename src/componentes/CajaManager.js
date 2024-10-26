@@ -12,7 +12,7 @@ const CajaManager = () => {
   const proveedores = useSelector((state) => state.storeProveedor.proveedorSlice);
 
   // Temporalmente fijamos el día como "jueves" para la prueba
-  const diaActual = 'jueves'; // Cambia a 'sábado' u otro día según necesites
+  const diaActual = 'sabado'; // Cambia a 'sábado' u otro día según necesites
 
   const normalizarTexto = (texto) => {
     return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
