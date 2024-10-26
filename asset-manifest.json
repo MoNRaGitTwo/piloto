@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/piloto/static/css/main.1b0fcd65.css",
-    "main.js": "/piloto/static/js/main.8d74db6c.js",
+    "main.css": "/piloto/static/css/main.60c1be97.css",
+    "main.js": "/piloto/static/js/main.a9470006.js",
     "static/js/453.69621f62.chunk.js": "/piloto/static/js/453.69621f62.chunk.js",
     "index.html": "/piloto/index.html",
-    "main.1b0fcd65.css.map": "/piloto/static/css/main.1b0fcd65.css.map",
-    "main.8d74db6c.js.map": "/piloto/static/js/main.8d74db6c.js.map",
+    "main.60c1be97.css.map": "/piloto/static/css/main.60c1be97.css.map",
+    "main.a9470006.js.map": "/piloto/static/js/main.a9470006.js.map",
     "453.69621f62.chunk.js.map": "/piloto/static/js/453.69621f62.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1b0fcd65.css",
-    "static/js/main.8d74db6c.js"
+    "static/css/main.60c1be97.css",
+    "static/js/main.a9470006.js"
   ]
 }
