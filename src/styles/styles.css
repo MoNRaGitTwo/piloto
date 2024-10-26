@@ -1,4 +1,4 @@
-/* Estilos para la cuadrícula de productos */
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -49,13 +49,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px; /* Ajusta según sea necesario */
+  height: 300px; 
 }
 
 .carousel .carousel-item img {
   width: auto;
-  height: 300px; /* Establece la altura fija */
-  object-fit: contain; /* Asegura que la imagen se ajuste dentro del contenedor */
+  height: 300px; 
+  object-fit: contain; 
   
 }
 
@@ -64,17 +64,17 @@
 }
 
 .btn-secondary {
-  background-color: #6c757d; /* Gris para Pendiente */
+  background-color: #6c757d; 
   color: white;
 }
 
 .btn-warning {
-  background-color: #d39e00; /* Amarillo oscuro para En proceso */
+  background-color: #d39e00; 
   color: white;
 }
 
 .btn-success {
-  background-color: #28a745; /* Verde oscuro para Listo */
+  background-color: #28a745; 
   color: white;
 }
 
@@ -87,17 +87,17 @@
 }
 
 .carrito-button {
-  background-color: #8B0000 !important; /* Rojo oscuro */
+  background-color: #8B0000 !important; 
   color: white !important;
-  border-radius: 20px !important; /* Bordes redondeados */
-  padding: 10px 20px !important; /* Más ancho */
+  border-radius: 20px !important; 
+  padding: 10px 20px !important; 
   border: none !important;
   cursor: pointer !important;
   transition: background-color 0.3s ease !important;
 }
 
 .carrito-button:hover {
-  background-color: #a30000 !important; /* Un rojo un poco más claro al pasar el mouse */
+  background-color: #a30000 !important; 
 }
 
 
@@ -108,12 +108,12 @@
   border-radius: 5px;
   padding: 5px;
   background-color: #f9f9f9;
-  width: 180px; /* Ajusta el ancho según sea necesario */
-  justify-content: space-between; /* Espacio entre los botones y el valor */
+  width: 180px;
+  justify-content: space-between;
 }
 
 .quantity-button {
-  background-color: #8B0000; /* Rojo oscuro */
+  background-color: #8B0000; 
   color: white;
   border: none;
   padding: 5px 10px;
@@ -124,7 +124,7 @@
 }
 
 .quantity-button:hover {
-  background-color: #a30000; /* Un rojo un poco más claro al pasar el mouse */
+  background-color: #a30000; 
 }
 
 .quantity-value {
@@ -132,7 +132,7 @@
   margin: 0 10px;
 }
 
-/* SusPedidos.css */
+
 
 .sus-pedidos-container {
   padding: 20px;
@@ -172,7 +172,7 @@
   margin-left: 10px;
 }
 
-* Colores según el estado del pedido */
+
 .estado-pedido.pendiente {
   background-color: #ffcc00 !important; /* Amarillo para pendiente */
   color: #000 !important; /* Texto negro */

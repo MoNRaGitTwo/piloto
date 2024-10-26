@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL3 } from '../config';
 import '../styles/styles.css';
 
 const SusPedidos = () => {
@@ -16,7 +17,7 @@ const SusPedidos = () => {
         if (!loggedInUserId) {
             navigate('/login');
         } else if (isAdmin) {
-            axios.get('http://localhost:5153/api/Users')
+            axios.get(`${API_BASE_URL3}/api/Users`)
                 .then((response) => {
                     setUsuarios(response.data.$values);
                     setSelectedUserId(response.data.$values[0]?.Id || '');
@@ -29,7 +30,7 @@ const SusPedidos = () => {
 
     useEffect(() => {
         if (selectedUserId) {
-            axios.get(`http://localhost:5153/api/Pedidos/user/${selectedUserId}`)
+            axios.get(`${API_BASE_URL3}/api/Pedidos/user/${selectedUserId}`)
                 .then((response) => {
                     setPedidos(response.data.$values);
                 })
