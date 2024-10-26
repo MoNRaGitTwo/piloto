@@ -23,6 +23,7 @@ import Login from './componentes/Login';
 import LogoutButton from './componentes/LogoutButton';
 import Register from './componentes/Register';
 import ListaReservas from './componentes/ListaReservas';
+import SusPedidos from './componentes/SusPedidos';
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.storeAuth.user !== null);
@@ -31,7 +32,7 @@ const App = () => {
   return (
     <Router>
       <div className="container">
-        <h1 className="my-4">Bienvenido a PedidosDespues</h1>
+        <h1 className="my-4">Bienvenido a Piloto</h1>
         <nav className="navbar navbar-expand-lg navbar-light bg-light mb-4">
           <div className="container-fluid">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -44,12 +45,17 @@ const App = () => {
               <li className="nav-item">
                 <Link className="nav-link" to="/mostrar-Registro">Registro</Link>
               </li>
+              <li className="nav-item">
+                  <Link className="nav-link" to="/mis-pedidos">Mis Pedidos</Link>
+                </li>
 
               {!isLoggedIn && (
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">Login</Link>
                 </li>
               )}
+
+              
 
               {isAdmin && (
                 <>
@@ -110,6 +116,8 @@ const App = () => {
           <Route path="/mostrar-Carrito" element={<Carrito />} />
           <Route path="/login" element={<Login />} />
           <Route path="/mostrar-Registro" element={<Register />} />
+
+          <Route path="/mis-pedidos" element={<SusPedidos />} />
 
           {/* Rutas protegidas */}
           <Route path="/agregar-producto" element={<AdminRoutes><AddProductForm /></AdminRoutes>} />

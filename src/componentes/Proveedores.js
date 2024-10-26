@@ -1,59 +1,116 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/styles.css'; // Importa tu archivo CSS aquí
-import { API_BASE_URL3 } from '../config';
 
 const Proveedores = () => {
-  const [proveedores, setProveedores] = useState([]); // Estado local
+    const [proveedores, setProveedores] = useState([]);
+    const [proveedorSeleccionado, setProveedorSeleccionado] = useState('');
+    const [productoId, setProductoId] = useState('');
+    const [productos, setProductos] = useState([]);
 
-  useEffect(() => {
-    const fetchProveedores = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL3}/TodosProveedores`, {
-          headers: {
-            'ngrok-skip-browser-warning': 'true'
-          }
-        });
-        if (response.status === 200) {
-          const data = response.data.$values; // Acceder a $values
-          setProveedores(data);
+    useEffect(() => {
+        // Obtener todos los proveedores desde la API
+        const fetchProveedores = async () => {
+            try {
+                const response = await axios.get('http://localhost:5153/TodosProveedores');
+                // Extraer la lista de proveedores desde la respuesta de la API
+                const proveedoresData = response.data.$values || [];
+                setProveedores(proveedoresData);
+            } catch (error) {
+                console.error('Error al obtener los proveedores:', error);
+            }
+        };
+
+        fetchProveedores();
+    }, []);
+
+    const handleProveedorChange = async (event) => {
+        const proveedorId = event.target.value;
+        setProveedorSeleccionado(proveedorId);
+
+        if (proveedorId) {
+            try {
+                // Obtener productos asociados al proveedor seleccionado
+                const response = await axios.get(`http://localhost:5153/Products/ObtenerProductosPorProveedor/${proveedorId}`);
+                console.log("soy los productos con los porveedores", response.data.$values);
+
+                setProductos(response.data.$values);
+            } catch (error) {
+                console.error('Error al obtener productos por proveedor:', error);
+            }
         } else {
-          throw new Error('Error al obtener proveedores');
+            setProductos([]);
         }
-      } catch (error) {
-        console.error('Error al obtener proveedores:', error);
-      }
     };
 
-    fetchProveedores();
-  }, []); // El array vacío asegura que este efecto solo se ejecute una vez, cuando el componente se monta.
+    const asociarProducto = async () => {
+        if (proveedorSeleccionado && productoId) {
+            try {
+                // Construcción de la URL con template literals usando los valores dinámicos
+                await axios.post(`http://localhost:5153/Products/AsociarProductoAProveedor?proveedorId=${proveedorSeleccionado}&productoId=${parseInt(productoId, 10)}`, {
+                    proveedorId: proveedorSeleccionado,
+                    productoId: parseInt(productoId, 10)
+                });
+                alert('Producto asociado exitosamente.');
+                // Recargar la lista de productos del proveedor después de asociar uno nuevo
+                handleProveedorChange({ target: { value: proveedorSeleccionado } });
+            } catch (error) {
+                console.error('Error al asociar producto al proveedor:', error);
+                alert('Error al asociar el producto. Intente nuevamente.');
+            }
+        } else {
+            alert('Seleccione un proveedor y un ID de producto válido.');
+        }
+    };
 
-  const renderProveedores = () => (
-    <table className="proveedores-table">
-      <thead>
-        <tr>
-          <th>Nom Empresa</th>
-          <th>Nombre</th>
-          <th>Telefono</th>
-        </tr>
-      </thead>
-      <tbody>
-        {proveedores.map(p => (
-          <tr key={p.Id}>
-            <td>{p.Empresa}</td>
-            <td>{p.Nombre}</td>
-            <td>{p.Telefono}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+    return (
+        <div style={{ backgroundColor: '#1c1c1c', padding: '20px', borderRadius: '10px', color: 'white' }}>
+            <h2>Asociar Producto a Proveedor</h2>
+            <div style={{ marginBottom: '10px' }}>
+                <label htmlFor="proveedorSelect">Seleccione un Proveedor: </label>
+                <select
+                    id="proveedorSelect"
+                    value={proveedorSeleccionado}
+                    onChange={handleProveedorChange}
+                    style={{ padding: '5px', margin: '10px' }}
+                >
+                    <option value="">-- Selecciona un Proveedor --</option>
+                    {proveedores.map((proveedor) => (
+                        <option key={proveedor.Id} value={proveedor.Id}>
+                            {proveedor.Nombre} - {proveedor.Empresa}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-  return (
-    <div>
-      {renderProveedores()}
-    </div>
-  );
+            <div style={{ marginBottom: '10px' }}>
+                <label htmlFor="productoId">ID del Producto: </label>
+                <input
+                    type="number"
+                    id="productoId"
+                    value={productoId}
+                    onChange={(e) => setProductoId(e.target.value)}
+                    style={{ padding: '5px', margin: '10px' }}
+                />
+            </div>
+
+            <button onClick={asociarProducto} style={{ backgroundColor: '#a00', padding: '10px', borderRadius: '5px', color: 'white' }}>
+                Guardar
+            </button>
+
+            {productos.length > 0 && (
+                <div style={{ marginTop: '20px' }}>
+                    <h3>Productos Asociados:</h3>
+                    <ul>
+                        {productos.map((producto) => (
+                            <li key={producto.Id}>
+                                {producto.Name} (ID: {producto.Id})
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default Proveedores;

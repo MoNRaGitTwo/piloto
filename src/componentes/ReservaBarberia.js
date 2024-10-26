@@ -1,4 +1,3 @@
-// src/componentes/ReservaBarberia.js
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addReserva } from '../reducers/reservasSlice';
@@ -14,7 +13,6 @@ const ReservaBarberia = () => {
 
   const dispatch = useDispatch();
 
-  // Función para crear una reserva en la base de datos
   const crearReservaEnDB = async (reservaData) => {
     try {
       const response = await fetch(`${API_BASE_URL3}/CrearReserva`, {
@@ -40,26 +38,21 @@ const ReservaBarberia = () => {
   const handleReserva = (barbero, hora) => {
     const nombre = prompt("Ingresa tu nombre:");
     const telefono = prompt("Ingresa tu teléfono:");
-    
+
     if (nombre && telefono) {
-      // Crear la fecha y establecer la hora seleccionada.
       const fecha = new Date();
-      fecha.setHours(hora - 3, 0, 0, 0); // Restar 3 horas antes de enviar a la base de datos.
-      
+      fecha.setHours(hora - 3, 0, 0, 0);
+
       const reservaData = {
         ClienteNombre: nombre,
         ClienteTelefono: telefono,
-        FechaHora: fecha.toISOString(), // Convertir a ISO para enviar a la base de datos.
+        FechaHora: fecha.toISOString(),
         Barbero: barbero,
         Estado: 'Pendiente',
       };
-      // Guardar la reserva en el store global
-      //dispatch(addReserva({ ...reservaData, ReservaId: data.ReservaId }));
-  
-      // Enviar la reserva a la base de datos
+
       crearReservaEnDB(reservaData);
-  
-      // Cambiar el estado del barbero a ocupado
+
       setEstadoBarberos(prev => ({
         ...prev,
         [barbero]: {
@@ -69,27 +62,28 @@ const ReservaBarberia = () => {
       }));
     }
   };
-  
 
   return (
-    <div className="reserva-barberia">
+    <div className="reserva-barberia" style={styles.reservaBarberia}>
       {horarios.map((hora) => (
-        <div key={hora} className="hora-reserva">
-          <h3>{hora}:00</h3>
-          <div className="barberos">
-            <div className="barbero">
+        <div key={hora} className="hora-reserva" style={styles.horaReserva}>
+          <h3 style={styles.hora}>{hora}:00</h3>
+          <div className="barberos" style={styles.barberos}>
+            <div className="barbero" style={styles.barbero}>
               Juan{' '}
               <span
                 className={`estado-barbero ${estadoBarberos.Juan[hora] ? 'ocupado' : 'libre'}`}
+                style={estadoBarberos.Juan[hora] ? styles.ocupado : styles.libre}
                 onClick={() => !estadoBarberos.Juan[hora] && handleReserva('Juan', hora)}
               >
                 {estadoBarberos.Juan[hora] ? '🔴' : '⚪'}
               </span>
             </div>
-            <div className="barbero">
+            <div className="barbero" style={styles.barbero}>
               Pedro{' '}
               <span
                 className={`estado-barbero ${estadoBarberos.Pedro[hora] ? 'ocupado' : 'libre'}`}
+                style={estadoBarberos.Pedro[hora] ? styles.ocupado : styles.libre}
                 onClick={() => !estadoBarberos.Pedro[hora] && handleReserva('Pedro', hora)}
               >
                 {estadoBarberos.Pedro[hora] ? '🔴' : '⚪'}
@@ -100,6 +94,44 @@ const ReservaBarberia = () => {
       ))}
     </div>
   );
+};
+
+const styles = {
+  reservaBarberia: {
+    padding: '20px',
+    maxWidth: '600px',
+    margin: '0 auto',
+    backgroundColor: '#f7f7f7',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  },
+  horaReserva: {
+    marginBottom: '20px',
+  },
+  hora: {
+    fontSize: '1.5em',
+    color: '#333',
+    textAlign: 'center',
+  },
+  barberos: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    marginTop: '10px',
+  },
+  barbero: {
+    fontSize: '1.2em',
+    textAlign: 'center',
+  },
+  ocupado: {
+    cursor: 'not-allowed',
+    color: 'red',
+    fontSize: '1.5em',
+  },
+  libre: {
+    cursor: 'pointer',
+    color: 'green',
+    fontSize: '1.5em',
+  },
 };
 
 export default ReservaBarberia;

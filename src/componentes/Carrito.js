@@ -4,7 +4,7 @@ import { guardarPedido } from '../reducers/pedidoDosSlice';
 import { reducirStockAsync } from '../reducers/productosSlice';
 import { clearCarrito, eliminarProducto } from '../reducers/carritoSlice';
 import { actualizarDeudaAsync, updateUser } from '../reducers/userSlice';
-import {  actualizarCajaAsync, obtenerCajaAsync } from '../reducers/cajaSlice'; // Importa las acciones de caja
+import { actualizarCajaAsync, obtenerCajaAsync } from '../reducers/cajaSlice'; // Importa las acciones de caja
 import '../styles/styles.css';
 
 const Carrito = () => {
@@ -12,21 +12,23 @@ const Carrito = () => {
   const carrito = useSelector((state) => state.storeCarrito.carritolice);
   const cantidad = useSelector((state) => state.storeCantidad);
   const usuarioActual = useSelector((state) => state.storeUser.usuarios);
-  //const pedidosGlobales = useSelector((state) => state.pedidoDosStore.pedidos);
+  const pedidosGlobales = useSelector((state) => state.pedidoDosStore.pedidos);
   const [mensajeExito, setMensajeExito] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [metodoPago, setMetodoPago] = useState(null); // Nuevo estado para método de pago
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false); // Estado para mostrar la tarjeta
 
   const idUsuarioActual = usuarioActual[0]?.id;
-//const nombreUsuarioActual = usuarioActual[0]?.nombre;
+  const nombreUsuarioActual = usuarioActual[0]?.nombre;
 
-/*
+
   const pedidosUsuarioActual = pedidosGlobales.filter((pedido) => {
     const userIdPedido = Number(pedido.UserId);
     const userIdActual = Number(idUsuarioActual);
+    //console.log("soy pedidos actuales " , pedidosUsuarioActual);
+    
     return userIdPedido === userIdActual;
-  });*/
+  });
 
   const handleEliminarProducto = (productoId) => {
     dispatch(eliminarProducto(productoId));

@@ -6,6 +6,8 @@ import '../styles/styles.css';
 function ListaSugerida() {
   const dispatch = useDispatch();
   const productosSugeridos = useSelector((state) => state.storeListaSugerida.productosSugeridos);
+  console.log("soy prodsugerido , lista sugerida" , productosSugeridos);
+  
 
   const handleRemove = (id) => {
     dispatch(removeProductoSugerido(id));
@@ -24,7 +26,7 @@ function ListaSugerida() {
 
   return (
     <div className="container">
-      <h1>Lista Sugerida</h1>
+      <h1>Lista Sugeridaaaaaaa</h1>
       <button className="btn btn-outline-danger mb-3" onClick={handleClear}>
         Limpiar lista sugerida
       </button>
